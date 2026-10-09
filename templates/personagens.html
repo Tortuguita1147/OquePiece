@@ -1,0 +1,114 @@
+{%extends "base.html"%}
+
+{%block titulo%}
+    Personagens
+{%endblock%}
+
+{%block style%}
+    <style>
+        body { font-family: sans-serif; background: #121214; color: white; text-align: center; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .board { overflow-x: auto; padding-bottom: 20px; margin-top: 30px; }
+        .row-guesses { display: flex; gap: 8px; margin-top: 10px; min-width: 1050px; justify-content: center; }
+        .box { width: 95px; height: 75px; padding: 5px; border-radius: 4px; font-weight: bold; font-size: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-sizing: border-box; }
+        .correto { background-color: #1b8a5a; }
+        .errado { background-color: #bc2525; }
+        form input { padding: 12px; width: 280px; border-radius: 4px; border: none; font-size: 16px; }
+        form button { padding: 12px 20px; background: #ff9000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 16px; }
+        .vitoria { color: #26d07c; font-size: 26px; font-weight: bold; margin: 20px; }
+        .char-img { width: 95px; height: 75px; padding: 5px; border-radius: 4px; font-weight: bold; font-size: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-sizing: border-box; }
+    </style>
+{%endblock%}
+
+{%block content%}
+
+    <div class="container">
+        <h1>WhatPiece</h1>
+        <p>Insira um personagem para começar a adivinhar</p>
+
+        <form action="/palpite" method="POST">
+            <input type="text" name="nome_busca" placeholder="Digite o personagem..." required autocomplete="off">
+            <button type="submit">Dar Palpite</button>
+        </form>
+
+        <br>
+        <a href="/reiniciar" style="color: #888; text-decoration: none;"> Reiniciar Jogo</a>
+
+        <div class="board">
+            {% for g in historico %}
+                {% if g.venceu %}
+                    <div class="vitoria"> Vitória! O personagem era {{ g.nome }}!</div>
+                {% endif %}
+                
+                <div class="row-guesses">
+                    <!-- Nome -->
+                    <div class="box" style="background: #202024; width: 130px; font-size: 13px;">{{ g.nome }}</div>
+
+                    <!--Foto-->
+                    <img class="char-img" src="{{ url_for('static', filename='img/'~ g.foto) }}" alt="{{g.nome}}">
+                    
+                    <!-- Gênero -->
+                    <div class="box {{ g.genero.classe }}">
+                        <span>Gênero</span>
+                        <small>{{ g.genero.valor }}</small>
+                    </div>
+                    
+                    <!-- Raça -->
+                    <div class="box {{ g.raca.classe }}">
+                        <span>Raça</span>
+                        <small>{{ g.raca.valor }}</small>
+                    </div>
+                    
+                    <!-- Afiliação -->
+                    <div class="box {{ g.afiliacao.classe }}">
+                        <span>Grupo</span>
+                        <small style="font-size: 10px;">{{ g.afiliacao.valor }}</small>
+                    </div>
+
+                    <!-- Fruta -->
+                    <div class="box {{ g.fruta.classe }}">
+                        <span>Fruta</span>
+                        <small>{{ g.fruta.valor }}</small>
+                    </div>
+
+                    <!-- Haki -->
+                    <div class="box {{ g.haki.classe }}">
+                        <span>Haki</span>
+                        <small>{{ g.haki.valor }}</small>
+                    </div>
+                    
+                    <!-- Origem -->
+                    <div class="box {{ g.origem.classe }}">
+                        <span>Origem</span>
+                        <small>{{ g.origem.valor }}</small>
+                    </div>
+
+                    <!-- Recompensa -->
+                    <div class="box {{ g.recompensa.classe }}">
+                        <span>Recompensa {{ g.recompensa.seta }}</span>
+                        <small style="font-size: 10px;">{{ g.recompensa.valor }}</small>
+                    </div>
+
+                    <!-- Altura -->
+                    <div class="box {{ g.altura.classe }}">
+                        <span>Altura {{ g.altura.seta }}</span>
+                        <small>{{ g.altura.valor }}</small>
+                    </div>
+
+                    <!-- Idade -->
+                    <div class="box {{ g.idade.classe }}">
+                        <span>Idade {{ g.idade.seta }}</span>
+                        <small>{{ g.idade.valor }}</small>
+                    </div>
+
+                    <!-- Arco Inicial -->
+                    <div class="box {{ g.arco.classe }}">
+                        <span>Arco</span>
+                        <small style="font-size: 10px;">{{ g.arco.valor }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{%endblock%}
