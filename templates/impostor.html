@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block titulo %}Impostor — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .painel-info { display: flex; gap: 24px; justify-content: center; color: var(--texto-fraco); margin-bottom: 12px; }
+    .painel-info b { color: var(--texto); }
+    .opcoes-imp { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 560px; margin: 18px auto; }
+    .opcoes-imp button { padding: 20px; font-size: 15px; }
+    .opcoes-imp button img { display: block; width: 70px; height: 70px; border-radius: 6px; margin: 0 auto 8px; object-fit: cover; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🕵️ Impostor</h1>
+<p class="sub">Três desses personagens têm algo em comum. Clique no intruso.</p>
+
+<div class="painel-info">
+    <span>Rodada <b>{{ rodada }}/{{ total }}</b></span>
+    <span>Acertos <b>{{ placar }}</b></span>
+</div>
+
+{% if resultado %}
+    {% if resultado.acertou %}
+        <div class="aviso bom">Isso! O intruso era {{ resultado.certo }}. Grupo: {{ resultado.grupo }}.</div>
+    {% else %}
+        <div class="aviso erro">Errou. O intruso era {{ resultado.certo }} (grupo: {{ resultado.grupo }}).</div>
+    {% endif %}
+{% endif %}
+
+{% if acabou %}
+    <div class="aviso">Fim! Você acertou {{ placar }} de {{ total }}.</div>
+{% else %}
+    <form method="POST">
+        <div class="opcoes-imp">
+            {% for nome in atual.opcoes %}
+                <button type="submit" name="escolha" value="{{ nome }}" class="botao-fraco">
+                    <img src="{{ url_for('retrato', nome=nome) }}" alt="{{ nome }}">
+                    {{ nome }}
+                </button>
+            {% endfor %}
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('impostor', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('impostor_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

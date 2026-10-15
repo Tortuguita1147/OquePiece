@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block titulo %}Bingo — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .bingo-topo { display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
+    .atual { text-align: center; }
+    .atual img { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; border: 2px solid var(--laranja); }
+    .atual .nome { font-weight: bold; margin-top: 6px; font-size: 18px; }
+    .cartela { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 640px; margin: 18px auto; }
+    .casa-bingo {
+        min-height: 92px; padding: 8px; border-radius: 6px; border: 2px solid var(--borda);
+        background: var(--painel-claro); color: var(--texto); font-size: 13px; font-weight: bold;
+        display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .casa-bingo:hover { border-color: var(--laranja); }
+    .casa-bingo.marcada { background: var(--verde); border-color: var(--verde); cursor: default; }
+    .painel-info { display: flex; gap: 24px; justify-content: center; color: var(--texto-fraco); }
+    .painel-info b { color: var(--texto); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🎟️ Bingo</h1>
+<p class="sub">O personagem da vez bate com qual condição? Clique na casa certa. Se travar, use o Pular.</p>
+
+<div class="painel-info">
+    <span>Casas <b>{{ travadas|length }}/9</b></span>
+    <span>Erros <b>{{ erros }}</b></span>
+</div>
+
+{% if aviso %}<div class="aviso erro">{{ aviso }}</div>{% endif %}
+{% if venceu %}<div class="aviso bom">BINGO! Cartela completa!</div>{% endif %}
+{% if acabou and not venceu %}<div class="aviso erro">Acabaram os personagens da fila. Ficou faltando casa.</div>{% endif %}
+
+{% if atual and not venceu %}
+    <div class="bingo-topo">
+        <div class="atual">
+            <img src="{{ retrato_url(atual) }}" alt="{{ atual.nome }}">
+            <div class="nome">{{ atual.nome }}</div>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="cartela">
+            {% for c in celulas %}
+                {% if loop.index0 in travadas %}
+                    <div class="casa-bingo marcada">✔️ {{ c }}</div>
+                {% else %}
+                    <button class="casa-bingo" type="submit" name="casa" value="{{ loop.index0 }}">{{ c }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="acoes" style="justify-content: center;">
+            <button type="submit" name="acao" value="pular" class="botao-fraco">Pular personagem</button>
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('bingo', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('bingo_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

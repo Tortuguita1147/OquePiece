@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block titulo %}Wanted — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .cartaz {
+        width: 300px; margin: 20px auto; background: #e8dcc0; color: #2b2418;
+        border: 6px solid #7a6a45; border-radius: 4px; padding: 14px; text-align: center;
+        font-family: Georgia, serif;
+    }
+    .cartaz h2 { font-size: 30px; letter-spacing: 4px; margin: 4px 0; color: #2b2418; }
+    .cartaz .retrato { border: 3px solid #7a6a45; background: #cfc4a5; }
+    .cartaz img { display: block; width: 100%; height: 260px; object-fit: cover; }
+    .cartaz .premio { margin-top: 8px; font-weight: bold; }
+    .desfoque { filter: blur({{ borrao }}px) grayscale(100%); }
+    .colorido .desfoque { filter: blur({{ borrao }}px); }
+    .painel-info { display: flex; gap: 24px; justify-content: center; color: var(--texto-fraco); }
+    .painel-info b { color: var(--texto); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🪧 Wanted</h1>
+<p class="sub">Quem está escondido no cartaz? Cada erro deixa a imagem um pouco mais nítida.</p>
+
+<div class="painel-info">
+    <span>Tentativas <b>{{ erros }}</b></span>
+    {% if dica %}<span>Recompensa: <b>{{ alvo.recompensa|formato_berries }}</b></span>{% endif %}
+</div>
+
+<div class="cartaz colorido" id="cartaz">
+    <h2>WANTED</h2>
+    <div class="retrato">
+        <img class="desfoque" src="{{ retrato_url(alvo) }}" alt="Cartaz">
+    </div>
+    <div class="premio">
+        {% if dica %}{{ alvo.recompensa|formato_berries }}{% else %}? ? ?{% endif %}
+    </div>
+</div>
+
+{% if venceu %}
+    <div class="aviso bom">Capturado! Era <strong>{{ alvo.nome }}</strong>.</div>
+{% endif %}
+{% if erro %}<div class="aviso erro">{{ erro }}</div>{% endif %}
+
+{% if not venceu %}
+    <form class="busca" action="{{ url_for('wanted') }}" method="POST">
+        <input type="text" name="palpite" list="lista-nomes" placeholder="Quem é o personagem?" required autocomplete="off">
+        <datalist id="lista-nomes">
+            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+        </datalist>
+        <button type="submit">Adivinhar</button>
+    </form>
+    <div class="acoes">
+        <form method="POST"><button type="submit" name="acao" value="dica" class="botao-fraco">💡 Ver recompensa</button></form>
+        <button type="button" class="botao-fraco" id="botao-cor">🎨 Alternar cor</button>
+    </div>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('wanted', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('wanted_reiniciar') }}">Reiniciar</a>
+</div>
+
+<script>
+    var botao = document.getElementById("botao-cor");
+    if (botao) {
+        botao.addEventListener("click", function () {
+            document.getElementById("cartaz").classList.toggle("colorido");
+        });
+    }
+</script>
+{% endblock %}

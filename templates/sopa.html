@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sopa de Letras — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .sopa-layout { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 18px; }
+    .grade-sopa {
+        display: grid; gap: 3px;
+        grid-template-columns: repeat({{ grade[0]|length }}, 34px);
+        user-select: none;
+    }
+    .cel {
+        width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+        background: var(--painel-claro); border: 1px solid var(--borda); border-radius: 4px;
+        font-weight: bold; cursor: pointer; font-size: 14px;
+    }
+    .cel.inicio { border-color: var(--laranja); background: rgba(255,144,0,0.25); }
+    .cel.achado { background: var(--verde); border-color: var(--verde); color: #06210f; }
+    .lista-palavras { min-width: 160px; }
+    .lista-palavras li { list-style: none; padding: 5px 0; font-weight: bold; letter-spacing: 1px; }
+    .lista-palavras li.ok { color: var(--verde); text-decoration: line-through; }
+    .lista-palavras ul { padding: 0; margin: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🔎 Sopa de Letras</h1>
+<p class="sub">Ache os nomes escondidos. Clique na primeira e na última letra da palavra.</p>
+
+<div class="sopa-layout">
+    <div class="grade-sopa" id="grade">
+        {% for i in range(grade|length) %}
+            {% for j in range(grade[i]|length) %}
+                <div class="cel" data-lin="{{ i }}" data-col="{{ j }}">{{ grade[i][j] }}</div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <div class="lista-palavras">
+        <h2>Palavras</h2>
+        <ul id="lista">
+            {% for p in palavras %}<li data-palavra="{{ p }}">{{ p }}</li>{% endfor %}
+        </ul>
+        <div class="aviso bom" id="parabens" style="display:none;">Achou tudo! 🎉</div>
+    </div>
+</div>
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('sopa', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('sopa') }}">Reiniciar</a>
+</div>
+
+<script>
+    var inicio = null;
+    var grade = document.getElementById("grade");
+    var celulas = grade.querySelectorAll(".cel");
+    var palavras = Array.prototype.slice.call(document.querySelectorAll("#lista li"));
+
+    function chave(l, c) { return l + ":" + c; }
+
+    celulas.forEach(function (cel) {
+        cel.addEventListener("click", function () {
+            if (cel.classList.contains("achado")) return;
+            if (!inicio) {
+                limparInicio();
+                inicio = cel;
+                cel.classList.add("inicio");
+                return;
+            }
+            var achou = testar(inicio, cel);
+            limparInicio();
+            if (!achou) { inicio = null; }
+        });
+    });
+
+    function limparInicio() {
+        celulas.forEach(function (c) { c.classList.remove("inicio"); });
+    }
+
+    function testar(a, b) {
+        var l1 = +a.dataset.lin, c1 = +a.dataset.col;
+        var l2 = +b.dataset.lin, c2 = +b.dataset.col;
+        var dl = l2 - l1, dc = c2 - c1;
+        if (dl !== 0 && dc !== 0 && Math.abs(dl) !== Math.abs(dc)) return false;
+
+        var passos = Math.max(Math.abs(dl), Math.abs(dc));
+        if (passos === 0) return false;
+        var sl = Math.sign(dl), sc = Math.sign(dc);
+        var texto = "";
+        var alvos = [];
+        for (var k = 0; k <= passos; k++) {
+            var l = l1 + sl * k, c = c1 + sc * k;
+            var cel = grade.querySelector('[data-lin="' + l + '"][data-col="' + c + '"]');
+            if (!cel) return false;
+            texto += cel.textContent;
+            alvos.push(cel);
+        }
+
+        var encontrada = null;
+        palavras.forEach(function (li) {
+            if (li.classList.contains("ok")) return;
+            var p = li.dataset.palavra;
+            if (p === texto || p === texto.split("").reverse().join("")) encontrada = li;
+        });
+        if (!encontrada) return false;
+
+        encontrada.classList.add("ok");
+        alvos.forEach(function (c) { c.classList.add("achado"); });
+        verificarFim();
+        return true;
+    }
+
+    function verificarFim() {
+        var faltam = palavras.filter(function (li) { return !li.classList.contains("ok"); });
+        if (faltam.length === 0) {
+            document.getElementById("parabens").style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block titulo %}Maior ou Menor — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .duelo { display: flex; gap: 18px; justify-content: center; align-items: stretch; margin: 24px 0; flex-wrap: wrap; }
+    .carta-bounty {
+        width: 240px; background: var(--painel-claro); border: 2px solid var(--borda);
+        border-radius: 8px; padding: 16px; text-align: center;
+    }
+    .carta-bounty img { width: 110px; height: 110px; border-radius: 6px; object-fit: cover; }
+    .carta-bounty .nome { font-weight: bold; margin-top: 8px; }
+    .carta-bounty .preco { color: var(--laranja); font-weight: bold; font-size: 18px; margin-top: 6px; }
+    .carta-bounty.escondida { display: flex; flex-direction: column; align-items: center; justify-content: center; border-style: dashed; }
+    .carta-bounty.escondida .interrogao { font-size: 56px; color: var(--texto-fraco); }
+    .painel-info { display: flex; gap: 24px; justify-content: center; color: var(--texto-fraco); margin-top: 8px; }
+    .painel-info b { color: var(--texto); }
+    .cronometro { font-size: 22px; font-weight: bold; text-align: center; color: var(--laranja); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>💰 Maior ou Menor</h1>
+<p class="sub">Qual recompensa é maior? Você tem 3 vidas e 2 minutos.</p>
+
+<div class="cronometro" id="relogio">2:00</div>
+<div class="painel-info">
+    <span>Rodada <b>{{ rodada }}/{{ total }}</b></span>
+    <span>Acertos <b>{{ placar }}</b></span>
+    <span>Vidas <b>{{ vidas }}</b></span>
+</div>
+
+{% if mensagem %}<div class="aviso erro">{{ mensagem }}</div>{% endif %}
+
+{% if acabou %}
+    <div class="aviso bom">Fim de jogo! Você acertou {{ placar }} de {{ total }}.</div>
+{% else %}
+    <div class="duelo">
+        <div class="carta-bounty">
+            <img src="{{ retrato_url(atual) }}" alt="{{ atual.nome }}">
+            <div class="nome">{{ atual.nome }}</div>
+            <div class="preco">{{ atual.recompensa|formato_berries }}</div>
+        </div>
+        <div class="carta-bounty escondida">
+            <div class="interrogao">?</div>
+            <div class="nome">Próximo</div>
+        </div>
+    </div>
+
+    <form method="POST" class="acoes" style="justify-content: center;">
+        <button type="submit" name="escolha" value="maior">⬆️ É maior</button>
+        <button type="submit" name="escolha" value="menor" class="botao-fraco">⬇️ É menor</button>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('higher_lower', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('hl_reiniciar') }}">Reiniciar</a>
+</div>
+
+<script>
+    // cronômetro só de enfeite, o placar é do servidor
+    var restante = 120;
+    var relogio = document.getElementById("relogio");
+    var rodando = {{ 'false' if acabou else 'true' }};
+    if (rodando) {
+        var t = setInterval(function () {
+            restante--;
+            if (restante <= 0) {
+                clearInterval(t);
+                relogio.textContent = "0:00";
+                document.querySelectorAll("form button").forEach(function (b) { b.disabled = true; });
+                return;
+            }
+            var m = Math.floor(restante / 60);
+            var s = restante % 60;
+            relogio.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+        }, 1000);
+    }
+</script>
+{% endblock %}

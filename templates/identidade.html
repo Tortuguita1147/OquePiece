@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block titulo %}Identidade — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .perguntas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin: 16px 0; }
+    .perguntas button { width: 100%; text-align: left; }
+    .historico-perguntas { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+    .resposta { padding: 10px 14px; border-radius: 5px; background: var(--painel-claro); border: 1px solid var(--borda); }
+    .resposta.sim { border-color: var(--verde); }
+    .resposta.nao { border-color: var(--vermelho); }
+    .painel-info { display: flex; gap: 24px; justify-content: center; color: var(--texto-fraco); }
+    .painel-info b { color: var(--texto); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>❓ Identidade</h1>
+<p class="sub">Faça perguntas de sim ou não para deduzir o personagem. Cada pergunta gasta uma vida.</p>
+
+<div class="painel-info">
+    <span>Vidas <b>{{ vidas }}</b></span>
+    <span>Perguntas feitas <b>{{ feitas|length }}</b></span>
+</div>
+
+{% if venceu %}
+    <div class="aviso bom">Você descobriu! O personagem era {{ personagem(session['id_alvo']).nome }}.</div>
+{% endif %}
+{% if erro %}<div class="aviso erro">{{ erro }}</div>{% endif %}
+{% if acabou and not venceu %}
+    <div class="aviso erro">Suas vidas acabaram. O personagem era {{ personagem(session['id_alvo']).nome }}.</div>
+{% endif %}
+
+<div class="historico-perguntas">
+    {% for f in feitas %}
+        <div class="resposta {{ 'sim' if f.resposta else 'nao' }}">
+            {{ perguntas[f.idx].texto }} — <strong>{{ "Sim" if f.resposta else "Não" }}</strong>
+        </div>
+    {% endfor %}
+</div>
+
+{% if not venceu and not acabou %}
+    <form method="POST">
+        <input type="hidden" name="acao" value="perguntar">
+        <div class="perguntas">
+            {% for p in perguntas %}
+                {% if loop.index0 not in feitas|map(attribute='idx')|list %}
+                    <button type="submit" name="pergunta" value="{{ loop.index0 }}" class="botao-fraco">{{ p.texto }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </form>
+
+    <h2 style="margin-top:20px;">Já sabe quem é?</h2>
+    <form class="busca" action="{{ url_for('identidade') }}" method="POST">
+        <input type="text" name="palpite" list="lista-nomes" placeholder="Digite o personagem..." required autocomplete="off">
+        <datalist id="lista-nomes">
+            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+        </datalist>
+        <button type="submit">Chutar</button>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('identidade', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('identidade_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Wordle — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .linha-wordle { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .letra {
+        width: 42px; height: 46px; display: flex; align-items: center; justify-content: center;
+        font-weight: bold; font-size: 20px; border-radius: 4px; border: 2px solid var(--borda);
+        background: var(--painel-claro); text-transform: uppercase;
+    }
+    .letra.certo { background: var(--verde); border-color: var(--verde); }
+    .letra.parcial { background: var(--amarelo); border-color: var(--amarelo); }
+    .letra.errado { background: #3a3a40; border-color: #3a3a40; color: #cfcfd4; }
+    .letra.vazia { opacity: 0.35; }
+    .tabuleiro { margin: 22px 0; }
+    .legenda { display: flex; gap: 16px; justify-content: center; color: var(--texto-fraco); font-size: 12px; flex-wrap: wrap; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🔤 Wordle</h1>
+<p class="sub">Adivinhe o nome do personagem em 6 tentativas. A resposta tem {{ alvo|length }} letras.</p>
+
+{% if erro %}<div class="aviso erro">{{ erro }}</div>{% endif %}
+{% if venceu %}<div class="aviso bom">Vitória, nakama! Você achou <strong>{{ alvo }}</strong>.</div>{% endif %}
+{% if acabou %}<div class="aviso erro">Acabaram as tentativas! O nome era <strong>{{ alvo }}</strong>.</div>{% endif %}
+
+<div class="tabuleiro">
+    {% for t in tentativas %}
+        <div class="linha-wordle">
+            {% for i in range(t.palpite|length) %}
+                <div class="letra {{ t.resultado[i] }}">{{ t.palpite[i] }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    {% for _ in range(6 - tentativas|length) %}
+        <div class="linha-wordle">
+            {% for _ in range(alvo|length) %}<div class="letra vazia"></div>{% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="legenda">
+    <span>🟩 letra certa no lugar certo</span>
+    <span>🟨 letra certa no lugar errado</span>
+    <span>⬛ letra não existe</span>
+</div>
+
+{% if not venceu and not acabou %}
+<form class="busca" action="{{ url_for('wordle') }}" method="POST" style="margin-top: 20px;">
+    <input type="text" name="palpite" list="lista-nomes" placeholder="Nome do personagem..." required autocomplete="off">
+    <datalist id="lista-nomes">
+        {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+    </datalist>
+    <button type="submit">Enviar</button>
+</form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('wordle', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('wordle_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

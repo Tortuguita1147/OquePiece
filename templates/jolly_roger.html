@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Jolly Roger — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .bandeira {
+        width: 300px; height: 200px; margin: 22px auto; background: #0b0b0d;
+        border: 4px solid #2e2e34; border-radius: 4px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 90px; position: relative;
+    }
+    .bandeira .caveira { font-size: 80px; }
+    .bandeira .marca { position: absolute; bottom: 8px; font-size: 34px; }
+    .dica { text-align: center; color: var(--texto-fraco); min-height: 20px; }
+    .opcoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin: 18px 0; }
+    .opcoes button { width: 100%; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🏴‍☠️ Jolly Roger</h1>
+<p class="sub">De qual tripulação é essa bandeira? Use a dica se precisar.</p>
+
+<div class="bandeira">
+    <span class="caveira">☠️</span>
+    <span class="marca">{{ emoji }}</span>
+</div>
+<div class="dica" id="dica" style="display:none;">{{ dica }}</div>
+<div class="acoes" style="justify-content:center;">
+    <button type="button" class="botao-fraco" id="botao-dica">Mostrar dica</button>
+</div>
+
+{% if resultado %}
+    {% if resultado.acertou %}
+        <div class="aviso bom">Isso! É a bandeira dos {{ resultado.certo }}.</div>
+    {% else %}
+        <div class="aviso erro">Errou. A bandeira é dos {{ resultado.certo }}.</div>
+    {% endif %}
+{% endif %}
+
+{% if not resultado %}
+    <form method="POST">
+        <div class="opcoes">
+            {% for op in opcoes %}
+                <button type="submit" name="escolha" value="{{ op }}" class="botao-fraco">{{ op }}</button>
+            {% endfor %}
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('jolly_roger', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('jr_reiniciar') }}">Reiniciar</a>
+</div>
+
+<script>
+    var b = document.getElementById("botao-dica");
+    b.addEventListener("click", function () {
+        var d = document.getElementById("dica");
+        var escondida = d.style.display === "none";
+        d.style.display = escondida ? "block" : "none";
+        b.textContent = escondida ? "Esconder dica" : "Mostrar dica";
+    });
+</script>
+{% endblock %}

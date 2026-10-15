@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}QuePedaço{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    {% block style %}{% endblock %}
+</head>
+<body>
+    <header class="topo">
+        <a class="marca" href="{{ url_for('home') }}">
+            <span class="marca-caveira">☠️</span>
+            <span>Que<em>Pedaço</em></span>
+        </a>
+        <nav class="topo-nav">
+            <a href="{{ url_for('home') }}">Todos os jogos</a>
+            <a href="{{ url_for('personagens') }}">Personagens</a>
+        </nav>
+    </header>
+
+    <main class="palco">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="rodape">
+        <p>QuePedaço — paródia de WhatPiece</p>
+        <p>Créditos do nome: Victoria 🏴‍☠️</p>
+    </footer>
+</body>
+</html>

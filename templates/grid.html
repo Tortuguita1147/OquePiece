@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block titulo %}Grid — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .grade { display: grid; grid-template-columns: 150px repeat(3, 1fr); gap: 8px; margin: 22px 0; }
+    .cabeca {
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        font-size: 12px; font-weight: bold; padding: 8px; border-radius: 5px;
+        background: #0d0d0f; border: 1px solid var(--borda);
+    }
+    .cabeca.linha { background: #241a0a; border-color: var(--laranja); }
+    .cabeca.coluna { background: #0a1a24; border-color: #3d8bfd; }
+    .casa { position: relative; }
+    .casa input { height: 100%; text-align: center; font-size: 13px; }
+    .casa.certo input { border-color: var(--verde); background: rgba(27,138,90,0.2); }
+    .casa.errado input { border-color: var(--vermelho); background: rgba(188,37,37,0.2); }
+    .casa.repetido input { border-color: var(--amarelo); background: rgba(181,159,59,0.2); }
+    .casa .marca { position: absolute; top: 4px; right: 6px; font-size: 12px; }
+    .resposta { color: var(--verde); font-size: 12px; font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🧩 Grid</h1>
+<p class="sub">Ache um personagem que cumpra a condição da linha <strong>e</strong> da coluna. Sem repetir ninguém.</p>
+
+{% if not dados %}
+    <div class="aviso erro">Hoje não deu pra montar um tabuleiro. Tente o modo treino.</div>
+    <div class="acoes"><a class="botao" href="{{ url_for('grid', treino=1) }}">Modo treino</a></div>
+{% else %}
+    {% if avaliacao and avaliacao.revelado %}
+        <div class="aviso">Solução revelada.</div>
+    {% elif avaliacao and avaliacao.venceu %}
+        <div class="aviso bom">Grid completo! Você acertou as 9 casas.</div>
+    {% elif avaliacao %}
+        <div class="aviso erro">Acertou {{ avaliacao.acertos }} de 9.</div>
+    {% endif %}
+
+    <form method="POST">
+        <div class="grade">
+            <div></div>
+            {% for c in dados.colunas %}<div class="cabeca coluna">↓ {{ c }}</div>{% endfor %}
+
+            {% for i in range(3) %}
+                <div class="cabeca linha">→ {{ dados.linhas[i] }}</div>
+                {% for j in range(3) %}
+                    {% set k = i * 3 + j %}
+                    {% set classe = "" %}
+                    {% if avaliacao and avaliacao.marcacao %}{% set classe = avaliacao.marcacao[k] %}{% endif %}
+                    <div class="casa {{ classe }}">
+                        {% if avaliacao and avaliacao.revelado %}
+                            <input type="text" value="{{ dados.solucao[k] }}" disabled>
+                            <span class="marca">✔️</span>
+                        {% else %}
+                            <input type="text" name="casa{{ k }}" list="lista-nomes" autocomplete="off"
+                                   value="{{ request.form.get('casa' ~ k, '') }}">
+                            {% if classe == "certo" %}<span class="marca">✔️</span>{% endif %}
+                            {% if classe == "errado" %}<span class="marca">❌</span>{% endif %}
+                            {% if classe == "repetido" %}<span class="marca">🔁</span>{% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <datalist id="lista-nomes">
+            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+        </datalist>
+
+        <div class="acoes">
+            <button type="submit">Conferir</button>
+            <button type="submit" name="acao" value="revelar" class="botao-fraco">Desistir e revelar</button>
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('grid', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('grid_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

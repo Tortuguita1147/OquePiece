@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Adivinhar Episódio — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .episodio-topo { text-align: center; margin: 18px 0; }
+    .episodio-topo img { width: 180px; height: 180px; border-radius: 8px; object-fit: cover; border: 2px solid var(--borda); }
+    .episodio-topo .dica { color: var(--texto-fraco); margin-top: 8px; }
+    .opcoes-ep { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 460px; margin: 18px auto; }
+    .opcoes-ep button { padding: 16px; font-size: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>📺 Adivinhar Episódio</h1>
+<p class="sub">Em qual episódio do anime este personagem apareceu pela primeira vez?</p>
+
+<div class="episodio-topo">
+    <img src="{{ retrato_url(alvo) }}" alt="{{ alvo.nome }}">
+    <div class="dica">Dica: estreou no arco <strong>{{ alvo.arco }}</strong>.</div>
+</div>
+
+{% if resultado %}
+    {% if resultado.acertou %}
+        <div class="aviso bom">Acertou! Estreia no episódio {{ resultado.certo }}.</div>
+    {% else %}
+        <div class="aviso erro">Errou. A estreia foi no episódio {{ resultado.certo }}.</div>
+    {% endif %}
+{% endif %}
+
+{% if not resultado %}
+    <form method="POST">
+        <div class="opcoes-ep">
+            {% for ep in opcoes %}
+                <button type="submit" name="escolha" value="{{ ep }}" class="botao-fraco">Episódio {{ ep }}</button>
+            {% endfor %}
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('episodio', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('episodio_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

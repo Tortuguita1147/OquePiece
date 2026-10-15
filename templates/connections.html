@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block titulo %}Connections — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .resolvidos { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
+    .grupo-resolvido { border-radius: 6px; padding: 10px 14px; font-weight: bold; }
+    .g0 { background: #b59f3b; color: #1a1508; }
+    .g1 { background: #1b8a5a; color: #06210f; }
+    .g2 { background: #3d8bfd; color: #04122b; }
+    .g3 { background: #9b5de5; color: #160a24; }
+    .grupo-resolvido small { display: block; font-weight: normal; opacity: 0.85; margin-top: 3px; }
+    .tabuleiro-conn { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 18px 0; }
+    .peca { position: relative; }
+    .peca input { position: absolute; opacity: 0; pointer-events: none; }
+    .peca label {
+        display: block; text-align: center; padding: 16px 8px; border-radius: 6px;
+        background: var(--painel-claro); border: 2px solid var(--borda);
+        cursor: pointer; font-size: 13px; font-weight: bold;
+    }
+    .peca input:checked + label { border-color: var(--laranja); background: rgba(255,144,0,0.18); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🔗 Connections</h1>
+<p class="sub">Escolha 4 personagens que formam um grupo. Cada erro custa uma vida.</p>
+
+{% if not grupos %}
+    <div class="aviso erro">Não deu pra montar o tabuleiro hoje. Tente o modo treino.</div>
+    <div class="acoes"><a class="botao" href="{{ url_for('connections', treino=1) }}">Modo treino</a></div>
+{% else %}
+    <div class="painel-info">
+        <span>Vidas <b>{{ vidas }}</b></span>
+        <span>Grupos <b>{{ resolvidos|length }}/4</b></span>
+    </div>
+
+    {% if aviso %}<div class="aviso erro">{{ aviso }}</div>{% endif %}
+    {% if venceu %}<div class="aviso bom">Você achou todas as conexões!</div>{% endif %}
+
+    <div class="resolvidos">
+        {% for g in grupos %}
+            {% if g.grupo in resolvidos %}
+                {% set idx = resolvidos.index(g.grupo) %}
+                <div class="grupo-resolvido g{{ idx }}">
+                    {{ g.grupo }}
+                    <small>{{ g.membros|join(" · ") }}</small>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if not venceu and vidas > 0 %}
+        <form method="POST">
+            <div class="tabuleiro-conn">
+                {% for nome in restantes %}
+                    <div class="peca">
+                        <input type="checkbox" name="escolhido" value="{{ nome }}" id="p{{ loop.index }}">
+                        <label for="p{{ loop.index }}">{{ nome }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="acoes">
+                <button type="submit">Confirmar grupo</button>
+            </div>
+        </form>
+    {% endif %}
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('connections', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('connections_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

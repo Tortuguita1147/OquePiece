@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block titulo %}Adivinhar Personagem — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .board { overflow-x: auto; padding-bottom: 20px; margin-top: 26px; }
+    .row-guesses { display: flex; gap: 8px; margin-top: 10px; min-width: 1120px; justify-content: center; }
+    .box {
+        width: 92px; height: 78px; padding: 5px; border-radius: 4px;
+        font-size: 12px; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; text-align: center;
+    }
+    .box span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; }
+    .box small { font-size: 11px; font-weight: bold; margin-top: 2px; }
+    .correto { background-color: var(--verde); }
+    .errado { background-color: var(--vermelho); }
+    .parcial { background-color: var(--amarelo); }
+    .char-img { width: 92px; height: 78px; object-fit: cover; border-radius: 4px; }
+    .nome-box { background: #0d0d0f; width: 128px; font-weight: bold; font-size: 13px; }
+    .vitoria { color: #26d07c; font-size: 22px; font-weight: bold; margin: 18px 0 4px; }
+    .busca { display: flex; gap: 10px; max-width: 520px; }
+    .busca input { flex: 1; }
+    .cabeçalho-colunas { min-width: 1120px; display: flex; gap: 8px; justify-content: center; color: var(--texto-fraco); font-size: 11px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🎯 Adivinhar Personagem</h1>
+<p class="sub">Chute um personagem. Verde = bateu, vermelho = errou, amarelo = quase (Haki em comum).</p>
+
+<form class="busca" action="{{ url_for('processar_palpite') }}" method="POST">
+    <input type="text" name="nome_busca" list="lista-nomes" placeholder="Digite o personagem..." required autocomplete="off">
+    <datalist id="lista-nomes">
+        {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+    </datalist>
+    <button type="submit">Dar palpite</button>
+</form>
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('personagens', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('reiniciar') }}">Reiniciar</a>
+</div>
+
+<div class="board">
+    {% for g in historico %}
+        {% if g.venceu %}
+            <div class="vitoria">Vitória! O personagem era {{ g.nome }}!</div>
+        {% endif %}
+        <div class="row-guesses">
+            <div class="box nome-box">{{ g.nome }}</div>
+            <img class="char-img" src="{% if g.foto %}{{ url_for('static', filename='img/' ~ g.foto) }}{% else %}{{ url_for('retrato', nome=g.nome) }}{% endif %}" alt="{{ g.nome }}">
+
+            <div class="box {{ g.genero.classe }}"><span>Gênero</span><small>{{ g.genero.valor }}</small></div>
+            <div class="box {{ g.raca.classe }}"><span>Raça</span><small>{{ g.raca.valor }}</small></div>
+            <div class="box {{ g.afiliacao.classe }}"><span>Grupo</span><small>{{ g.afiliacao.valor }}</small></div>
+            <div class="box {{ g.status.classe }}"><span>Status</span><small>{{ g.status.valor }}</small></div>
+            <div class="box {{ g.fruta.classe }}"><span>Fruta</span><small>{{ g.fruta.valor }}</small></div>
+            <div class="box {{ g.haki.classe }}"><span>Haki</span><small>{{ g.haki.valor }}</small></div>
+            <div class="box {{ g.origem.classe }}"><span>Origem</span><small>{{ g.origem.valor }}</small></div>
+            <div class="box {{ g.recompensa.classe }}"><span>Recompensa {{ g.recompensa.seta }}</span><small>{{ g.recompensa.valor }}</small></div>
+            <div class="box {{ g.altura.classe }}"><span>Altura {{ g.altura.seta }}</span><small>{{ g.altura.valor }}</small></div>
+            <div class="box {{ g.idade.classe }}"><span>Idade {{ g.idade.seta }}</span><small>{{ g.idade.valor }}</small></div>
+            <div class="box {{ g.arco.classe }}"><span>Arco</span><small>{{ g.arco.valor }}</small></div>
+            <div class="box {{ g.episodio.classe }}"><span>Episódio {{ g.episodio.seta }}</span><small>{{ g.episodio.valor }}</small></div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

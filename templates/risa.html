@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block titulo %}Adivinhar a Risa — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .risada-caixa {
+        text-align: center; background: var(--painel-claro); border: 2px solid var(--borda);
+        border-radius: 8px; padding: 40px 20px; max-width: 560px; margin: 24px auto;
+    }
+    .risada-caixa .risada {
+        font-size: 40px; font-weight: bold; color: var(--laranja);
+        font-style: italic; letter-spacing: 2px;
+    }
+    .risada-caixa .legenda { color: var(--texto-fraco); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>😆 Adivinhar a Risa</h1>
+<p class="sub">Leia a risada e descubra de quem é. Sem audio pra não dar erro no navegador da escola. 😅</p>
+
+<div class="risada-caixa">
+    <div class="legenda">De quem é essa risada?</div>
+    <div class="risada">"{{ risada }}"</div>
+</div>
+
+{% if venceu %}
+    <div class="aviso bom">Acertou! É a risada de <strong>{{ personagem(session['risa_alvo']).nome }}</strong>.</div>
+{% endif %}
+{% if erro %}<div class="aviso erro">{{ erro }}</div>{% endif %}
+
+{% if not venceu %}
+    <form class="busca" action="{{ url_for('risa') }}" method="POST">
+        <input type="text" name="palpite" list="lista-nomes" placeholder="Quem ri assim?" required autocomplete="off">
+        <datalist id="lista-nomes">
+            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+        </datalist>
+        <button type="submit">Adivinhar</button>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('risa', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('risa_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

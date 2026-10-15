@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block titulo %}Pirâmide — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .pilha { display: flex; flex-direction: column; gap: 8px; align-items: center; margin: 22px 0; }
+    .carta {
+        display: flex; align-items: center; gap: 12px;
+        width: 380px; max-width: 100%;
+        background: var(--painel-claro); border: 2px solid var(--borda);
+        border-radius: 6px; padding: 8px 12px; cursor: pointer; user-select: none;
+    }
+    .carta img { width: 46px; height: 46px; border-radius: 4px; object-fit: cover; }
+    .carta .pos { color: var(--texto-fraco); font-weight: bold; width: 24px; }
+    .carta .quem { font-weight: bold; }
+    .carta.marcada { border-color: var(--laranja); background: rgba(255,144,0,0.15); }
+    .carta.certa { border-color: var(--verde); }
+    .carta .valor { margin-left: auto; color: var(--texto-fraco); font-size: 12px; }
+    .criterio { text-align: center; color: var(--texto-fraco); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🔺 Pirâmide</h1>
+<p class="sub">Ordene de cima pra baixo pelo critério <strong>{{ categoria }}</strong> — o maior valor fica no topo.</p>
+{% if not resultado %}<p class="sub">Clique em duas cartas para trocar de lugar.</p>{% endif %}
+
+{% if resultado %}
+    {% if resultado.perfeito %}
+        <div class="aviso bom">Pirâmide perfeita! Você acertou os 10.</div>
+    {% else %}
+        <div class="aviso erro">Acertou {{ resultado.acertos }} de {{ resultado.total }}. A ordem certa está abaixo.</div>
+    {% endif %}
+{% endif %}
+
+{% if resultado %}
+    <div class="pilha">
+        {% for nome in ordem %}
+            {% set p = personagem(nome) %}
+            <div class="carta certa">
+                <span class="pos">{{ loop.index }}</span>
+                <img src="{{ retrato_url(p) }}" alt="{{ nome }}">
+                <span class="quem">{{ nome }}</span>
+                <span class="valor">
+                    {% if chave == "altura" %}{{ "%.2f"|format(p.altura)|replace(".", ",") }} m
+                    {% elif chave == "recompensa" %}{{ p.recompensa|formato_berries }}
+                    {% elif chave == "idade" %}{{ p.idade }} anos
+                    {% else %}Ep. {{ p.episodio }}{% endif %}
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <form method="POST" id="form-piramide">
+        <input type="hidden" name="ordem" id="campo-ordem">
+        <div class="pilha" id="pilha">
+            {% for nome in embaralhada %}
+                <div class="carta" data-nome="{{ nome }}">
+                    <span class="pos">{{ loop.index }}</span>
+                    <img src="{{ url_for('retrato', nome=nome) }}" alt="{{ nome }}">
+                    <span class="quem">{{ nome }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="acoes" style="justify-content: center;">
+            <button type="submit">Enviar ordem</button>
+        </div>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('piramide', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('piramide_reiniciar') }}">Reiniciar</a>
+</div>
+
+<script>
+    // troca de posição clicando em duas cartas
+    var marcada = null;
+    var pilha = document.getElementById("pilha");
+    var campo = document.getElementById("campo-ordem");
+
+    function atualizarCampo() {
+        var nomes = [];
+        pilha.querySelectorAll(".carta").forEach(function (c) { nomes.push(c.dataset.nome); });
+        campo.value = nomes.join("|");
+    }
+
+    if (pilha) {
+        pilha.addEventListener("click", function (e) {
+            var carta = e.target.closest(".carta");
+            if (!carta) return;
+            if (!marcada) {
+                marcada = carta;
+                carta.classList.add("marcada");
+            } else if (marcada === carta) {
+                carta.classList.remove("marcada");
+                marcada = null;
+            } else {
+                var temp = document.createElement("div");
+                pilha.insertBefore(temp, marcada);
+                pilha.insertBefore(marcada, carta);
+                pilha.insertBefore(carta, temp);
+                pilha.removeChild(temp);
+                marcada.classList.remove("marcada");
+                marcada = null;
+                atualizarCampo();
+            }
+        });
+        atualizarCampo();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titulo %}Adivinhar Fruta — QuePedaço{% endblock %}
+
+{% block style %}
+<style>
+    .fruta-caixa {
+        text-align: center; background: var(--painel-claro); border: 2px solid var(--borda);
+        border-radius: 8px; padding: 26px; max-width: 520px; margin: 22px auto;
+    }
+    .fruta-caixa .nome-jp { font-size: 26px; font-weight: bold; color: var(--laranja); }
+    .fruta-caixa .legenda { color: var(--texto-fraco); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .dicas { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+    .dica { padding: 10px; border-radius: 5px; background: #0d0d0f; border: 1px dashed var(--borda); }
+    .dica.bloqueada { color: var(--texto-fraco); }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🍎 Adivinhar Fruta</h1>
+<p class="sub">De quem é a Fruta do Diabo do dia? Você começa só com o nome em japonês.</p>
+
+<div class="fruta-caixa">
+    <div class="legenda">Fruta do dia</div>
+    <div class="nome-jp">{{ fruta }}</div>
+
+    <div class="dicas">
+        {% if erros >= 1 %}
+            <div class="dica">Tipo: <strong>{{ tipo }}</strong></div>
+        {% else %}
+            <div class="dica bloqueada">🔒 Tipo (libera após 1 erro)</div>
+        {% endif %}
+        {% if erros >= 3 %}
+            <div class="dica">Tradução: <strong>{{ traducao }}</strong></div>
+        {% else %}
+            <div class="dica bloqueada">🔒 Tradução (libera após 3 erros)</div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="painel-info" style="display:flex;gap:24px;justify-content:center;color:var(--texto-fraco);">
+    <span>Erros <b style="color:var(--texto)">{{ erros }}</b></span>
+</div>
+
+{% if venceu %}
+    <div class="aviso bom">Você acertou! A fruta é de <strong>{{ usuario }}</strong>.</div>
+{% endif %}
+{% if erro %}<div class="aviso erro">{{ erro }}</div>{% endif %}
+
+{% if not venceu %}
+    <form class="busca" action="{{ url_for('fruta') }}" method="POST">
+        <input type="text" name="palpite" list="lista-nomes" placeholder="De quem é essa fruta?" required autocomplete="off">
+        <datalist id="lista-nomes">
+            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
+        </datalist>
+        <button type="submit">Adivinhar</button>
+    </form>
+{% endif %}
+
+<div class="acoes">
+    <a class="botao botao-fraco" href="{{ url_for('fruta', treino=1) }}">Modo treino</a>
+    <a class="botao botao-fraco" href="{{ url_for('fruta_reiniciar') }}">Reiniciar</a>
+</div>
+{% endblock %}

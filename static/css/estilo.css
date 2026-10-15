@@ -1,0 +1,168 @@
+/* QuePedaço - estilo geral.
+   Mantive a cara do projeto antigo: fundo escuro, branco e laranja. */
+
+:root {
+    --fundo: #121214;
+    --painel: #1b1b1f;
+    --painel-claro: #202024;
+    --borda: #2e2e34;
+    --texto: #f2f2f2;
+    --texto-fraco: #9a9aa3;
+    --laranja: #ff9000;
+    --verde: #1b8a5a;
+    --vermelho: #bc2525;
+    --amarelo: #b59f3b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a { color: var(--laranja); }
+
+/* ---------- topo ---------- */
+.topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #0d0d0f;
+    border-bottom: 1px solid var(--borda);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--texto);
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.marca em { color: var(--laranja); font-style: normal; }
+.marca-caveira { font-size: 24px; }
+
+.topo-nav { display: flex; gap: 16px; }
+.topo-nav a {
+    color: var(--texto-fraco);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 4px;
+    border-bottom: 2px solid transparent;
+}
+.topo-nav a:hover { color: var(--texto); border-bottom-color: var(--laranja); }
+
+/* ---------- palco ---------- */
+.palco {
+    flex: 1;
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+}
+
+h1 { font-size: 26px; margin: 0 0 6px; }
+h2 { font-size: 19px; margin: 0 0 10px; }
+.sub { color: var(--texto-fraco); margin: 0 0 20px; font-size: 14px; }
+
+/* ---------- caixas e botões ---------- */
+.painel {
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+button, .botao {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 5px;
+    background: var(--laranja);
+    color: #1a1206;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+button:hover, .botao:hover { filter: brightness(1.1); }
+
+.botao-fraco {
+    background: transparent;
+    color: var(--texto-fraco);
+    border: 1px solid var(--borda);
+    font-weight: normal;
+}
+.botao-fraco:hover { color: var(--texto); filter: none; }
+
+input[type="text"], input[type="search"], select {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid var(--borda);
+    background: var(--painel-claro);
+    color: var(--texto);
+    width: 100%;
+}
+
+.acoes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+
+.aviso {
+    padding: 10px 14px;
+    border-radius: 5px;
+    background: rgba(255, 144, 0, 0.12);
+    border: 1px solid var(--laranja);
+    margin: 12px 0;
+    font-size: 14px;
+}
+.aviso.erro { background: rgba(188, 37, 37, 0.15); border-color: var(--vermelho); }
+.aviso.bom { background: rgba(27, 138, 90, 0.15); border-color: var(--verde); }
+
+/* ---------- grade de jogos (home) ---------- */
+.grade-jogos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.cartao-jogo {
+    display: block;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 16px;
+    text-decoration: none;
+    color: var(--texto);
+    transition: transform 0.12s, border-color 0.12s;
+}
+.cartao-jogo:hover { transform: translateY(-3px); border-color: var(--laranja); }
+.cartao-jogo .emoji { font-size: 30px; }
+.cartao-jogo h2 { margin: 10px 0 4px; font-size: 17px; }
+.cartao-jogo p { margin: 0; color: var(--texto-fraco); font-size: 13px; }
+
+/* ---------- rodapé ---------- */
+.rodape {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid var(--borda);
+    color: var(--texto-fraco);
+    font-size: 12px;
+}
+.rodape p { margin: 4px 0; }
