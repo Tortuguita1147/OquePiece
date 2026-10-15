@@ -1,9 +1,8 @@
 # QuePedaço ☠️
 
-Paródia escolar do [WhatPiece](https://whatpiece.com). Um site com **16 minijogos**
+Paródia do [WhatPiece](https://whatpiece.com). Um site com **16 minijogos**
 de One Piece, desafio novo todo dia e modo treino livre.
 
-> Trabalho de escola, feito de fã para fã. One Piece é do Eiichiro Oda.
 > O projeto não tem fins comerciais nem busca violar direitos autorais.
 
 ## Como rodar
@@ -12,7 +11,6 @@ de One Piece, desafio novo todo dia e modo treino livre.
 pip install -r requirements.txt
 python app.py
 ```
-
 Depois abre `http://127.0.0.1:5000` no navegador.
 
 ## Os jogos
@@ -81,7 +79,7 @@ bash smoke.sh          # todas as rotas respondem 200 sem traceback
 
 ## Números do projeto
 
-- **192 personagens** cadastrados
+- **192 personagens** cadastrados (pretende mais até o fim do ano)
 - **25 grupos** pra Connections/Impostor
 - **70 Frutas do Diabo**
 - **40 frases** pro jogo de quem disse
@@ -91,5 +89,4 @@ bash smoke.sh          # todas as rotas respondem 200 sem traceback
 ## Retratos
 
 Quase todos os personagens usam um retrato SVG desenhado na hora (`retrato_svg` em
-`jogos.py`): caveirinha com as iniciais e cores estáveis por nome. Se quiser usar foto,
-basta jogar o arquivo em `static/img/` e passar o nome dele no último campo do `_p(...)`.
+`jogos.py`): caveirinha com as iniciais e cores estáveis por nome.
