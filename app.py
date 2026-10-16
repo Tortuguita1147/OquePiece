@@ -70,7 +70,7 @@ def achar_personagem(texto):
             return p
     # aceita só o primeiro nome também (ex.: "luffy")
     for nome, p in INDICE.items():
-        if sem_acento(nome).split().lower()[0] == alvo:
+        if sem_acento(nome).split()[0] == alvo:
             return p
     return None
 
