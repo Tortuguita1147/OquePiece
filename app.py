@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""QuePedaço - paródia escolar do WhatPiece.
-
-Servidor Flask com todos os minijogos. O estado de cada partida fica na
-sessão (cookie assinado), igual o projeto original dos personagens.
-
-Rodar:
-    pip install flask
-    python app.py
-"""
-
 import random
 
 from flask import (Flask, Response, jsonify, redirect, render_template,
@@ -16,6 +5,8 @@ from flask import (Flask, Response, jsonify, redirect, render_template,
 
 import jogos
 from dados import PERSONAGENS, JOLLY_ROGERS
+
+from pyngrok import ngrok
 
 app = Flask(__name__)
 app.secret_key = "quepedaco_chave_secreta_do_mestre_dos_mares"
@@ -772,5 +763,9 @@ def draft_reiniciar():
     return redirect(url_for("draft"))
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+if __name__ == '__main__':
+    ngrok.set_auth_token("3HVaIMfTsjegmhnApPMhru4Rv0N_3Qavqd6NbPu39XUmP3HGa")
+    public_url = ngrok.connect(5000)
+    print(f" * Link público: {public_url}")
+    app.run(port=5000)
