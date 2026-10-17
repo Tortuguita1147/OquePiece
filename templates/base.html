@@ -27,5 +27,8 @@
         <p>QuePedaço — paródia de WhatPiece</p>
         <p>Créditos do nome: Victoria 🏴‍☠️</p>
     </footer>
+
+    <script>window.LISTA_PERSONAGENS = {{ todos_personagens|tojson }};</script>
+    <script src="{{ url_for('static', filename='js/busca.js') }}"></script>
 </body>
 </html>

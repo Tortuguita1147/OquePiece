@@ -51,10 +51,7 @@
 
 {% if not venceu and not acabou %}
 <form class="busca" action="{{ url_for('wordle') }}" method="POST" style="margin-top: 20px;">
-    <input type="text" name="palpite" list="lista-nomes" placeholder="Nome do personagem..." required autocomplete="off">
-    <datalist id="lista-nomes">
-        {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
-    </datalist>
+    <input type="text" name="palpite" class="busca-personagem" placeholder="Nome do personagem..." required autocomplete="off">
     <button type="submit">Enviar</button>
 </form>
 {% endif %}

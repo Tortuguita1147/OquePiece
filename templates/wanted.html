@@ -46,10 +46,7 @@
 
 {% if not venceu %}
     <form class="busca" action="{{ url_for('wanted') }}" method="POST">
-        <input type="text" name="palpite" list="lista-nomes" placeholder="Quem é o personagem?" required autocomplete="off">
-        <datalist id="lista-nomes">
-            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
-        </datalist>
+        <input type="text" name="palpite" class="busca-personagem" placeholder="Quem é o personagem?" required autocomplete="off">
         <button type="submit">Adivinhar</button>
     </form>
     <div class="acoes">

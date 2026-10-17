@@ -30,10 +30,7 @@
 <p class="sub">Chute um personagem. Verde = bateu, vermelho = errou, amarelo = quase (Haki em comum).</p>
 
 <form class="busca" action="{{ url_for('processar_palpite') }}" method="POST">
-    <input type="text" name="nome_busca" list="lista-nomes" placeholder="Digite o personagem..." required autocomplete="off">
-    <datalist id="lista-nomes">
-        {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
-    </datalist>
+    <input type="text" name="nome_busca" class="busca-personagem" placeholder="Digite o personagem..." required autocomplete="off">
     <button type="submit">Dar palpite</button>
 </form>
 

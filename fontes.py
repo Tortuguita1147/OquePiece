@@ -29,6 +29,8 @@ import time
 import unicodedata
 import urllib.request
 
+from traducao import CREWS_PT
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(BASE, "cache")
 ARQ_FINAL = os.path.join(CACHE, "personagens.json")
@@ -188,6 +190,12 @@ def _status(s):
 def _afiliacao(crew):
     if not crew:
         return "Desconhecida"
+    # a API manda o objeto da tripulação: usamos o id pro dicionário em PT
+    if isinstance(crew, dict):
+        cid = crew.get("id")
+        if cid in CREWS_PT:
+            return CREWS_PT[cid]
+        crew = crew.get("name") or ""
     n = _norm(crew)
     mapa = [
         (("marine", "marinha"), "Marinha"),
@@ -328,7 +336,7 @@ def montar():
 
     # 1) cada personagem da API vira uma ficha, enriquecida por local + QL
     for c in api:
-        nome = (c.get("name") or "").strip()
+        nome = (c.get("name") or "").split(" / ")[0].strip()
         local = _buscar(loc_idx, nome, alias_local=True)
         q = _buscar(ql_idx, nome) or (local and _buscar(ql_idx, local["nome"], alias_local=True))
         f = _ficha(local["nome"] if local else nome)
@@ -336,7 +344,7 @@ def montar():
         f["fonte"] = ["api"]
 
         if c.get("crew"):
-            f["afiliacao"] = _afiliacao(c["crew"].get("name"))
+            f["afiliacao"] = _afiliacao(c["crew"])
         if c.get("status"):
             f["status"] = _status(c["status"])
         if c.get("fruit"):

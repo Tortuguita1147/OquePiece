@@ -166,3 +166,47 @@ input[type="text"], input[type="search"], select {
     font-size: 12px;
 }
 .rodape p { margin: 4px 0; }
+
+/* ---------- busca de personagem (autocomplete) ---------- */
+.ac-wrap { position: relative; flex: 1; min-width: 0; }
+.ac-wrap input { width: 100%; }
+
+.ac-lista {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--painel-claro);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    overflow: hidden auto;
+    max-height: 330px;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
+}
+
+.ac-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.1s;
+}
+.ac-item + .ac-item { border-top: 1px solid rgba(255, 255, 255, 0.04); }
+.ac-item:hover, .ac-item.ativo { background: rgba(255, 144, 0, 0.16); }
+.ac-item.ativo { box-shadow: inset 3px 0 0 var(--laranja); }
+
+.ac-foto {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 7px;
+    object-fit: cover;
+    background: #0d0d0f;
+    border: 1px solid var(--borda);
+}
+.ac-nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.ac-vazio { padding: 12px; color: var(--texto-fraco); font-size: 13px; text-align: center; }

@@ -14,13 +14,22 @@ python app.py
 
 Depois abre `http://127.0.0.1:5000` no navegador.
 
-Opcional: para expor na internet com ngrok, defina o token antes de rodar
-(não deixe o token no código):
+Opcional: para expor na internet com ngrok, coloque seu token no arquivo
+`.env` (já vem preenchido com o token do projeto original):
 
-```bash
-export NGROK_AUTHTOKEN="seu_token_aqui"
-python app.py
 ```
+NGROK_AUTHTOKEN=seu_token_aqui
+```
+
+Ao rodar `python app.py`, o site sobe e imprime o link público do ngrok.
+O `.env` é um arquivo secreto — não compartilhe nem suba pro GitHub.
+
+## Tradução dos dados
+
+A API é francesa/inglesa. O `traducao.py` traduz os nomes das 149
+tripulações/grupos para português ("The Chapeau de Paille crew" →
+"Piratas do Chapéu de Palha"), e o `fontes.py` já converte os tipos de fruta
+("Zoan Mythique" → "Zoan Mítica") e o status ("vivant" → "Vivo").
 
 ## De onde vêm os dados
 
@@ -70,7 +79,9 @@ OquePiece/
 ├── app.py          # rotas Flask e regras de sessão
 ├── jogos.py        # a lógica de cada jogo (dá pra testar sem subir servidor)
 ├── fontes.py       # camada de dados: API + OnePieceQL + dicionário
+├── traducao.py     # tradução das tripulações da API para português
 ├── dados.py        # complemento local: gênero, haki, grupos, frases, risadas
+├── .env            # token do ngrok (secreto)
 ├── cache/          # JSON baixado das APIs (gerado por fontes.py)
 ├── testes.py       # integridade da base + geradores em várias seeds
 ├── teste_jogo.py   # testa a jogabilidade (POSTs) com o test client do Flask
@@ -78,8 +89,15 @@ OquePiece/
 ├── templates/      # um HTML por jogo + base + home
 └── static/
     ├── css/estilo.css
-    └── img/        # fotos opcionais (o resto vira retrato SVG na hora)
+    ├── js/busca.js  # busca de personagem com miniatura
+    └── img/         # fotos opcionais (o resto vira retrato SVG na hora)
 ```
+
+## Busca de personagem
+
+Os campos de palpite usam uma lista própria (`static/js/busca.js`) que mostra
+o **retrato do personagem** ao lado do nome, com navegação por teclado
+(setas + Enter) e busca sem acento.
 
 ### Desafio do dia x treino
 

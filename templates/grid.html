@@ -54,7 +54,7 @@
                             <input type="text" value="{{ dados.solucao[k] }}" disabled>
                             <span class="marca">✔️</span>
                         {% else %}
-                            <input type="text" name="casa{{ k }}" list="lista-nomes" autocomplete="off"
+                            <input type="text" name="casa{{ k }}" class="busca-personagem" autocomplete="off"
                                    value="{{ request.form.get('casa' ~ k, '') }}">
                             {% if classe == "certo" %}<span class="marca">✔️</span>{% endif %}
                             {% if classe == "errado" %}<span class="marca">❌</span>{% endif %}
@@ -64,10 +64,6 @@
                 {% endfor %}
             {% endfor %}
         </div>
-
-        <datalist id="lista-nomes">
-            {% for nome in todos_personagens %}<option value="{{ nome }}">{% endfor %}
-        </datalist>
 
         <div class="acoes">
             <button type="submit">Conferir</button>

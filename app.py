@@ -11,6 +11,20 @@ from fontes import (PERSONAGENS, JOLLY_ROGERS, COMPLETOS, COM_EPISODIO,
 app = Flask(__name__)
 app.secret_key = "quepedaco_chave_secreta_do_mestre_dos_mares"
 
+
+def carregar_env():
+    """Lê o arquivo .env (se existir) e joga as chaves no ambiente."""
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(caminho):
+        return
+    with open(caminho, encoding="utf-8") as f:
+        for linha in f:
+            linha = linha.strip()
+            if not linha or linha.startswith("#") or "=" not in linha:
+                continue
+            chave, valor = linha.split("=", 1)
+            os.environ.setdefault(chave.strip(), valor.strip())
+
 # índice nome -> personagem (também usado nas buscas)
 INDICE = {p["nome"]: p for p in PERSONAGENS}
 
@@ -769,7 +783,8 @@ def draft_reiniciar():
 
 
 if __name__ == '__main__':
-    # link público opcional: defina NGROK_AUTHTOKEN pra expor na internet
+    # ngrok: lê o token do .env (ou da variável NGROK_AUTHTOKEN) e abre o link público
+    carregar_env()
     token = os.environ.get("NGROK_AUTHTOKEN")
     if token:
         try:
@@ -778,4 +793,6 @@ if __name__ == '__main__':
             print(f" * Link público: {ngrok.connect(5000)}")
         except Exception as e:
             print(" (ngrok indisponível: %s)" % e)
+    else:
+        print(" (ngrok desligado: defina NGROK_AUTHTOKEN no .env pra abrir o link público)")
     app.run(port=5000)
