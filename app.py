@@ -1,12 +1,12 @@
+import os
 import random
 
 from flask import (Flask, Response, jsonify, redirect, render_template,
                    request, session, url_for)
 
 import jogos
-from dados import PERSONAGENS, JOLLY_ROGERS
-
-from pyngrok import ngrok
+from fontes import (PERSONAGENS, JOLLY_ROGERS, COMPLETOS, COM_EPISODIO,
+                    META, ORIGEM_DADOS)
 
 app = Flask(__name__)
 app.secret_key = "quepedaco_chave_secreta_do_mestre_dos_mares"
@@ -89,6 +89,8 @@ def modo(jogo):
 def injetar_ajudantes():
     def retrato_url(p):
         if p["foto"]:
+            if p["foto"].startswith("http"):
+                return p["foto"]
             return url_for("static", filename="img/" + p["foto"])
         return url_for("retrato", nome=p["nome"])
 
@@ -97,6 +99,8 @@ def injetar_ajudantes():
         "personagem": lambda n: INDICE.get(n),
         "todos_personagens": [p["nome"] for p in PERSONAGENS],
         "lista_jogos": LISTA_JOGOS,
+        "meta_dados": META,
+        "origem_dados": ORIGEM_DADOS,
     }
 
 
@@ -129,7 +133,7 @@ def retrato(nome):
 def personagens():
     seed = modo("personagens")
     if "secreto" not in session:
-        session["secreto"] = jogos.do_dia(PERSONAGENS, "personagem", seed)["nome"]
+        session["secreto"] = jogos.do_dia(COMPLETOS, "personagem", seed)["nome"]
     if "historico" not in session:
         session["historico"] = []
     return render_template("personagens.html", historico=session["historico"])
@@ -623,7 +627,7 @@ PERGUNTAS = [
 def identidade():
     seed = modo("identidade")
     if "id_alvo" not in session:
-        session["id_alvo"] = jogos.do_dia(PERSONAGENS, "identidade", seed)["nome"]
+        session["id_alvo"] = jogos.do_dia(COMPLETOS, "identidade", seed)["nome"]
         session["id_feitas"] = []
         session["id_vidas"] = 5
 
@@ -706,7 +710,7 @@ def episodio():
         alvo = jogos.gerar_episodio(seed)
         session["ep_alvo"] = alvo["nome"]
         r = random.Random(jogos._semente("ep-opcoes", seed))
-        outros = [p for p in PERSONAGENS if p["nome"] != alvo["nome"]]
+        outros = [p for p in COM_EPISODIO if p["nome"] != alvo["nome"]]
         opcoes = [alvo["episodio"]] + [p["episodio"] for p in r.sample(outros, 3)]
         opcoes = sorted(set(opcoes))
         session["ep_opcoes"] = opcoes
@@ -765,7 +769,13 @@ def draft_reiniciar():
 
 
 if __name__ == '__main__':
-    ngrok.set_auth_token("3HVaIMfTsjegmhnApPMhru4Rv0N_3Qavqd6NbPu39XUmP3HGa")
-    public_url = ngrok.connect(5000)
-    print(f" * Link público: {public_url}")
+    # link público opcional: defina NGROK_AUTHTOKEN pra expor na internet
+    token = os.environ.get("NGROK_AUTHTOKEN")
+    if token:
+        try:
+            from pyngrok import ngrok
+            ngrok.set_auth_token(token)
+            print(f" * Link público: {ngrok.connect(5000)}")
+        except Exception as e:
+            print(" (ngrok indisponível: %s)" % e)
     app.run(port=5000)

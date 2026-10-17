@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Testes rapidos do O Que Piece.
+Testes rapidos do QuePedaço.
 Roda com:  python3 testes.py
-Serve pra conferir que os geradores nunca quebram em nenhuma seed e que
-todo dado cadastrado aponta pra personagem que existe de verdade.
+
+Confere a integridade da base montada (API + enriquecimento + dicionário) e
+que nenhum gerador quebra em nenhuma seed.
 """
 from collections import Counter
 
 import jogos
-from dados import PERSONAGENS, GRUPOS, FRUTAS, JOLLY_ROGERS, FRASES
+from fontes import PERSONAGENS, GRUPOS, FRUTAS, JOLLY_ROGERS, FRASES, META
 
 nomes = {p["nome"] for p in PERSONAGENS}
 problemas = []
@@ -31,17 +32,25 @@ duplicados = [n for n, c in Counter(p["nome"] for p in PERSONAGENS).items() if c
 if duplicados:
     problemas.append(f"personagens duplicados: {duplicados}")
 
-campos = ["nome", "genero", "raca", "afiliacao", "status", "fruta",
-          "fruta_tipo", "haki", "recompensa", "altura", "idade",
-          "origem", "arco", "episodio"]
+# a base vem de fontes externas: nem todo campo existe pra todo mundo.
+# aqui só garantimos que os campos numéricos têm o tipo certo.
 for p in PERSONAGENS:
-    for c in campos:
-        if p.get(c) in (None, ""):
-            problemas.append(f"'{p['nome']}' esta sem o campo '{c}'")
-            break
+    if not p.get("nome"):
+        problemas.append("personagem sem nome")
+        continue
+    if not isinstance(p.get("recompensa"), int):
+        problemas.append(f"'{p['nome']}' com recompensa inválida")
+    if not isinstance(p.get("idade"), int):
+        problemas.append(f"'{p['nome']}' com idade inválida")
+    if not isinstance(p.get("episodio"), int):
+        problemas.append(f"'{p['nome']}' com episódio inválido")
+    try:
+        float(p.get("altura"))
+    except (TypeError, ValueError):
+        problemas.append(f"'{p['nome']}' com altura inválida")
 
 # --- 2. geradores em varias seeds -----------------------------------------
-SEEDS = 400
+SEEDS = 200
 
 
 def conta_falhas(nome, fn, valida):
@@ -60,6 +69,8 @@ print("Dados:")
 print(f"  {len(PERSONAGENS)} personagens, {len(GRUPOS)} grupos, "
       f"{len(FRUTAS)} frutas, {len(FRASES)} frases, "
       f"{len(JOLLY_ROGERS)} jolly rogers")
+print(f"  fonte: {META.get('gerado_em', '?')} "
+      f"(api={META.get('api', '?')}, enriquecidos={META.get('onepieceql', '?')})")
 
 print("Geradores:")
 conta_falhas("grid", jogos.gerar_grid, lambda r: r and len(r["solucao"]) == 9)

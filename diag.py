@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import sys, signal
-sys.path.insert(0, "/home/user/workspaces/732db4c0-b54e-45f4-9dee-4b4e0b61e684/oquepiece")
+import sys, os, signal
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import jogos
 
 class T(Exception): pass
@@ -9,7 +9,7 @@ signal.signal(signal.SIGALRM, h)
 
 gens = ["gerar_grid","gerar_connections","gerar_sopa","gerar_impostor","gerar_piramide",
         "gerar_higher_lower","gerar_bingo","gerar_draft","gerar_wordle","gerar_risa",
-        "gerar_identidade","gerar_wanted","gerar_episodio","gerar_fruta","gerar_jolly_roger"]
+        "gerar_wanted","gerar_episodio","gerar_fruta","gerar_jolly_roger"]
 for g in gens:
     fn = getattr(jogos, g, None)
     if not fn:

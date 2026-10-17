@@ -1,8 +1,9 @@
 #!/bin/bash
-cd /home/user/workspaces/732db4c0-b54e-45f4-9dee-4b4e0b61e684/oquepiece
+# Sobe o servidor e bate em todas as rotas conferindo HTTP 200 e ausência de traceback.
+cd "$(dirname "$0")"
 python3 app.py > /tmp/flask.log 2>&1 &
 PID=$!
-sleep 4
+sleep 5
 BASE=http://127.0.0.1:5000
 ROTAS="/ /personagens /wordle /piramide /grid /maior-menor /connections /bingo /wanted /fruta /jolly-roger /impostor /identidade /risa /sopa /episodio /draft /api/personagens"
 FALHAS=0

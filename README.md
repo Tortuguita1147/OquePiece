@@ -11,7 +11,36 @@ de One Piece, desafio novo todo dia e modo treino livre.
 pip install -r requirements.txt
 python app.py
 ```
+
 Depois abre `http://127.0.0.1:5000` no navegador.
+
+Opcional: para expor na internet com ngrok, defina o token antes de rodar
+(não deixe o token no código):
+
+```bash
+export NGROK_AUTHTOKEN="seu_token_aqui"
+python app.py
+```
+
+## De onde vêm os dados
+
+A base **não é mais um dicionário fixo**. Ela é montada por `fontes.py`:
+
+| Fonte | O que traz |
+|-------|------------|
+| **API One Piece** — `https://api.api-onepiece.com/v2` | Fonte principal: ~786 personagens, 213 frutas e 149 tripulações (nome, altura, idade, recompensa, tripulação, fruta, status) |
+| **OnePieceQL** — `https://onepieceql.up.railway.app/graphql` | Enriquecimento: origem (Blue), estreia no anime e afiliações de ~1.345 personagens |
+| **`dados.py`** (dicionário local) | Complemento: gênero, raça, haki, risada, arco, frases, grupos (Connections/Impostor) e Jolly Rogers — campos que as APIs públicas não oferecem |
+
+O resultado é gravado em `cache/personagens.json` e reaproveitado. O primeiro
+build baixa tudo da rede; depois o site funciona **sem internet**. Para atualizar:
+
+```bash
+python fontes.py --atualizar
+```
+
+Se a rede falhar e não houver cache, o site cai de volta no dicionário local
+(a home avisa que está em "modo offline").
 
 ## Os jogos
 
@@ -37,11 +66,13 @@ Depois abre `http://127.0.0.1:5000` no navegador.
 ## Como está organizado
 
 ```
-oquepiece/
+OquePiece/
 ├── app.py          # rotas Flask e regras de sessão
 ├── jogos.py        # a lógica de cada jogo (dá pra testar sem subir servidor)
-├── dados.py        # a base: personagens, grupos, frutas, frases, jolly rogers
-├── testes.py       # integridade dos dados + geradores em 400 seeds
+├── fontes.py       # camada de dados: API + OnePieceQL + dicionário
+├── dados.py        # complemento local: gênero, haki, grupos, frases, risadas
+├── cache/          # JSON baixado das APIs (gerado por fontes.py)
+├── testes.py       # integridade da base + geradores em várias seeds
 ├── teste_jogo.py   # testa a jogabilidade (POSTs) com o test client do Flask
 ├── smoke.sh        # sobe o servidor e bate em todas as rotas
 ├── templates/      # um HTML por jogo + base + home
@@ -49,19 +80,6 @@ oquepiece/
     ├── css/estilo.css
     └── img/        # fotos opcionais (o resto vira retrato SVG na hora)
 ```
-
-### Banco de dados
-
-Tudo fica em `dados.py`, em dicionários simples — sem banco de verdade, de propósito,
-pra ficar fácil de aumentar. Pra cadastrar um personagem novo, só copiar uma linha:
-
-```python
-_p("Nome", "Masculino", "Humano", "Piratas do Chapéu de Palha", "Vivo",
-   "Nenhuma", "Nenhuma", NADA,
-   0, 1.80, 25, "East Blue", "Romance Dawn", 1, ""),
-```
-
-A ordem dos campos está comentada no topo do arquivo.
 
 ### Desafio do dia x treino
 
@@ -72,21 +90,13 @@ jogo vira modo livre.
 ## Testes
 
 ```bash
-python testes.py       # dados + 400 seeds por gerador
+python testes.py       # integridade da base + geradores
 python teste_jogo.py   # jogabilidade (POSTs, sessão, vitória)
 bash smoke.sh          # todas as rotas respondem 200 sem traceback
 ```
 
-## Números do projeto
-
-- **192 personagens** cadastrados (pretende mais até o fim do ano)
-- **25 grupos** pra Connections/Impostor
-- **70 Frutas do Diabo**
-- **40 frases** pro jogo de quem disse
-- **15 Jolly Rogers**
-- **16 jogos**
-
 ## Retratos
 
 Quase todos os personagens usam um retrato SVG desenhado na hora (`retrato_svg` em
-`jogos.py`): caveirinha com as iniciais e cores estáveis por nome.
+`jogos.py`): caveirinha com as iniciais e cores estáveis por nome. O dicionário
+local ainda pode apontar pra uma foto em `static/img`.

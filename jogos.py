@@ -13,7 +13,8 @@ import hashlib
 import random
 from datetime import date
 
-from dados import PERSONAGENS, FRUTAS, GRUPOS, JOLLY_ROGERS, FRASES
+from fontes import (PERSONAGENS, FRUTAS, GRUPOS, JOLLY_ROGERS, FRASES,
+                    COM_RECOMPENSA, COM_RISADA, COM_EPISODIO)
 
 # índice por nome pra busca rápida
 POR_NOME = {p["nome"]: p for p in PERSONAGENS}
@@ -410,7 +411,9 @@ def gerar_piramide(seed=None):
     r = random.Random(_semente("piramide", seed))
     categoria = r.choice(CATEGORIAS_PIRAMIDE)
     if categoria["chave"] == "recompensa":
-        pool = [p for p in PERSONAGENS if p["recompensa"] > 0]
+        pool = COM_RECOMPENSA
+    elif categoria["chave"] == "episodio":
+        pool = COM_EPISODIO
     else:
         pool = list(PERSONAGENS)
     escolhidos = r.sample(pool, 10)
@@ -427,8 +430,7 @@ def gerar_piramide(seed=None):
 # ------------------------------------------------------------------
 def gerar_higher_lower(seed=None):
     r = random.Random(_semente("higher-lower", seed))
-    pool = [p for p in PERSONAGENS if p["recompensa"] > 0]
-    return r.sample(pool, 21)
+    return r.sample(COM_RECOMPENSA, 21)
 
 
 # ------------------------------------------------------------------
@@ -494,7 +496,7 @@ def gerar_risa(seed=None):
 
 
 def gerar_episodio(seed=None):
-    return do_dia(PERSONAGENS, "episodio", seed)
+    return do_dia(COM_EPISODIO, "episodio", seed)
 
 
 def gerar_jolly_roger(seed=None):
@@ -571,5 +573,4 @@ def _encaixar(grade, palavra, r):
 # ------------------------------------------------------------------
 def gerar_draft(seed=None):
     r = random.Random(_semente("draft", seed))
-    pool = [p for p in PERSONAGENS if p["recompensa"] > 0]
-    return r.sample(pool, 12)
+    return r.sample(COM_RECOMPENSA, 12)
