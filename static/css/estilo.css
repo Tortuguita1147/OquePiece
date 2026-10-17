@@ -1,171 +1,419 @@
-/* QuePedaço - estilo geral.
-   Mantive a cara do projeto antigo: fundo escuro, branco e laranja. */
+/* QuePedaço — estilo "Gazeta dos Sete Mares".
+   Estética de jornal antigo / cartaz de procurado: tipografia editorial,
+   réguas duplas, selos e textura de impressão. Sem gradientes coloridos. */
 
 :root {
-    --fundo: #121214;
-    --painel: #1b1b1f;
-    --painel-claro: #202024;
-    --borda: #2e2e34;
-    --texto: #f2f2f2;
-    --texto-fraco: #9a9aa3;
-    --laranja: #ff9000;
-    --verde: #1b8a5a;
-    --vermelho: #bc2525;
-    --amarelo: #b59f3b;
+    /* superfícies */
+    --fundo: #0f0d0a;
+    --painel: #1a1611;
+    --painel-claro: #221d16;
+    --borda: #3d3427;
+    --borda-forte: #5f5138;
+
+    /* tinta e papel */
+    --texto: #efe6d2;
+    --texto-fraco: #a99b7f;
+    --tinta: #14100b;
+    --papel: #e9dcbd;
+
+    /* cores de destaque */
+    --laranja: #d8a43c;   /* dourado/âmbar da marca */
+    --dourado: #d8a43c;
+    --verde: #3f7d54;
+    --vermelho: #b23a2e;
+    --amarelo: #b98a2e;
+
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+    --cond: "Oswald", "Arial Narrow", Arial, sans-serif;
+    --maquina: "Special Elite", "Courier New", monospace;
+    --corpo: Georgia, "Times New Roman", serif;
 }
 
 * { box-sizing: border-box; }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
     margin: 0;
-    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-    background: var(--fundo);
+    font-family: var(--corpo);
+    font-size: 16.5px;
+    line-height: 1.62;
     color: var(--texto);
+    background-color: var(--fundo);
+    background-image:
+        radial-gradient(1200px 600px at 50% -10%, rgba(216, 164, 60, 0.06), transparent 60%),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.012) 0 2px, transparent 2px 7px);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-a { color: var(--laranja); }
+/* grão de impressão por cima de tudo (não intercepta clique) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-/* ---------- topo ---------- */
+a { color: var(--dourado); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- topo / cabeçalho ---------- */
 .topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    background: #0d0d0f;
-    border-bottom: 1px solid var(--borda);
     position: sticky;
     top: 0;
     z-index: 20;
+    background: #0b0906;
+    border-bottom: 3px double var(--borda-forte);
+}
+
+.tarja {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 10px;
+    padding: 6px 22px;
+    font-family: var(--maquina);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--texto-fraco);
+    border-bottom: 1px solid var(--borda);
+}
+.tarja span::before { content: "◆ "; color: var(--dourado); }
+
+.topo-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 12px 22px;
 }
 
 .marca {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 22px;
-    font-weight: bold;
+    gap: 12px;
     color: var(--texto);
-    text-decoration: none;
-    letter-spacing: 1px;
+}
+.marca:hover { text-decoration: none; }
+
+.marca-caveira {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
+    color: var(--dourado);
+    border: 1px solid var(--borda-forte);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #241d14, #0b0906);
 }
 
-.marca em { color: var(--laranja); font-style: normal; }
-.marca-caveira { font-size: 24px; }
+.marca-nome {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 27px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+.marca-nome em { color: var(--dourado); font-style: italic; }
 
-.topo-nav { display: flex; gap: 16px; }
+.topo-nav { display: flex; gap: 20px; }
 .topo-nav a {
+    font-family: var(--cond);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--texto-fraco);
-    text-decoration: none;
-    font-size: 14px;
-    padding: 6px 4px;
+    padding: 6px 2px;
     border-bottom: 2px solid transparent;
 }
-.topo-nav a:hover { color: var(--texto); border-bottom-color: var(--laranja); }
+.topo-nav a:hover { color: var(--texto); border-bottom-color: var(--dourado); text-decoration: none; }
 
 /* ---------- palco ---------- */
 .palco {
     flex: 1;
     width: 100%;
-    max-width: 1150px;
+    max-width: 1120px;
     margin: 0 auto;
-    padding: 24px 16px 60px;
+    padding: 34px 20px 70px;
+    position: relative;
+    z-index: 1;
 }
 
-h1 { font-size: 26px; margin: 0 0 6px; }
-h2 { font-size: 19px; margin: 0 0 10px; }
-.sub { color: var(--texto-fraco); margin: 0 0 20px; font-size: 14px; }
+/* ---------- títulos ---------- */
+h1 {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 34px;
+    line-height: 1.12;
+    letter-spacing: 0.01em;
+    margin: 0 0 6px;
+}
+h1::after {
+    content: "";
+    display: block;
+    width: 74px;
+    height: 3px;
+    margin-top: 12px;
+    background: var(--dourado);
+    box-shadow: 0 5px 0 -2px var(--borda-forte);
+}
+h2 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0 0 10px;
+}
+h3 { font-family: var(--cond); text-transform: uppercase; letter-spacing: 0.08em; }
 
-/* ---------- caixas e botões ---------- */
+.sub {
+    font-family: var(--cond);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--texto-fraco);
+    margin: 16px 0 24px;
+    max-width: 720px;
+}
+
+/* ---------- painéis ---------- */
 .painel {
+    position: relative;
     background: var(--painel);
     border: 1px solid var(--borda);
-    border-radius: 8px;
-    padding: 18px;
+    padding: 22px 22px 20px;
+    box-shadow: inset 0 1px 0 rgba(216, 164, 60, 0.16), 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+.painel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(216, 164, 60, 0.14);
+    pointer-events: none;
 }
 
+/* ---------- botões ---------- */
 button, .botao {
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 11px 18px;
-    border: none;
-    border-radius: 5px;
-    background: var(--laranja);
-    color: #1a1206;
+    font-family: var(--cond);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    border: 1px solid var(--dourado);
+    border-radius: 2px;
+    background: var(--dourado);
+    color: var(--tinta);
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    box-shadow: 0 2px 0 #7a5a1c;
+    transition: transform 0.08s, filter 0.12s;
 }
-button:hover, .botao:hover { filter: brightness(1.1); }
+button:hover, .botao:hover { filter: brightness(1.07); text-decoration: none; }
+button:active, .botao:active { transform: translateY(2px); box-shadow: none; }
 
 .botao-fraco {
     background: transparent;
     color: var(--texto-fraco);
-    border: 1px solid var(--borda);
-    font-weight: normal;
+    border: 1px solid var(--borda-forte);
+    box-shadow: none;
+    font-weight: 400;
 }
-.botao-fraco:hover { color: var(--texto); filter: none; }
+.botao-fraco:hover { color: var(--texto); border-color: var(--dourado); filter: none; }
 
+/* ---------- campos ---------- */
 input[type="text"], input[type="search"], select {
-    font-family: inherit;
+    font-family: var(--corpo);
     font-size: 16px;
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid var(--borda);
-    background: var(--painel-claro);
+    padding: 12px 14px;
+    border: 1px solid var(--borda-forte);
+    border-radius: 2px;
+    background: #120f0a;
     color: var(--texto);
     width: 100%;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+input[type="text"]:focus, input[type="search"]:focus, select:focus {
+    outline: none;
+    border-color: var(--dourado);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(216, 164, 60, 0.14);
 }
 
-.acoes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+.acoes { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 18px; }
 
+/* ---------- avisos ---------- */
 .aviso {
-    padding: 10px 14px;
-    border-radius: 5px;
-    background: rgba(255, 144, 0, 0.12);
-    border: 1px solid var(--laranja);
-    margin: 12px 0;
-    font-size: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--dourado);
+    border-left-width: 5px;
+    background: rgba(216, 164, 60, 0.09);
+    margin: 16px 0;
+    font-size: 15px;
 }
-.aviso.erro { background: rgba(188, 37, 37, 0.15); border-color: var(--vermelho); }
-.aviso.bom { background: rgba(27, 138, 90, 0.15); border-color: var(--verde); }
+.aviso.erro { border-color: var(--vermelho); background: rgba(178, 58, 46, 0.12); }
+.aviso.bom { border-color: var(--verde); background: rgba(63, 125, 84, 0.14); }
 
-/* ---------- grade de jogos (home) ---------- */
+/* ---------- capa (home) ---------- */
+.capa { text-align: center; padding: 8px 0 4px; }
+.capa .regua {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--maquina);
+    color: var(--dourado);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+}
+.capa .regua::before, .capa .regua::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--borda-forte), transparent);
+}
+.capa-titulo {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 54px;
+    line-height: 1.05;
+    margin: 18px 0 10px;
+    letter-spacing: -0.01em;
+}
+.capa-titulo em { color: var(--dourado); font-style: italic; }
+.capa-titulo::after { display: none; }
+.capa-linha {
+    font-family: var(--cond);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 13px;
+    color: var(--texto-fraco);
+    margin: 0;
+}
+.capa-nota {
+    font-family: var(--maquina);
+    font-size: 12px;
+    color: var(--texto-fraco);
+    margin-top: 16px;
+}
+
+.secao-titulo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 40px 0 18px;
+    font-family: var(--cond);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 12px;
+    color: var(--texto-fraco);
+}
+.secao-titulo::before, .secao-titulo::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--borda);
+}
+
+/* ---------- grade de jogos ---------- */
 .grade-jogos {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+    gap: 16px;
 }
 
 .cartao-jogo {
+    position: relative;
     display: block;
+    padding: 20px 18px 18px;
     background: var(--painel);
     border: 1px solid var(--borda);
-    border-radius: 8px;
-    padding: 16px;
-    text-decoration: none;
     color: var(--texto);
-    transition: transform 0.12s, border-color 0.12s;
+    text-decoration: none;
+    transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s;
 }
-.cartao-jogo:hover { transform: translateY(-3px); border-color: var(--laranja); }
-.cartao-jogo .emoji { font-size: 30px; }
-.cartao-jogo h2 { margin: 10px 0 4px; font-size: 17px; }
-.cartao-jogo p { margin: 0; color: var(--texto-fraco); font-size: 13px; }
+.cartao-jogo::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--borda-forte);
+    transition: background 0.14s;
+}
+.cartao-jogo:hover {
+    transform: translateY(-4px) rotate(-0.4deg);
+    border-color: var(--borda-forte);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.45);
+    text-decoration: none;
+}
+.cartao-jogo:hover::before { background: var(--dourado); }
+
+.cartao-jogo .numero {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-family: var(--maquina);
+    font-size: 12px;
+    color: var(--texto-fraco);
+    letter-spacing: 0.08em;
+}
+.cartao-jogo .emoji {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+    margin-bottom: 14px;
+    border: 1px solid var(--borda-forte);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #241d14, #100d09);
+}
+.cartao-jogo h2 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 18px;
+    margin: 0 0 6px;
+    padding-right: 34px;
+}
+.cartao-jogo p { margin: 0; color: var(--texto-fraco); font-size: 13.5px; line-height: 1.5; }
+
+.cartao-jogo.destaque { border-color: var(--dourado); }
+.cartao-jogo.destaque::before { background: var(--dourado); }
+
+.selo {
+    position: absolute;
+    top: -10px;
+    left: -8px;
+    transform: rotate(-6deg);
+    font-family: var(--cond);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--papel);
+    background: var(--vermelho);
+    border: 1px solid #6f1f17;
+    padding: 3px 9px;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+}
 
 /* ---------- rodapé ---------- */
 .rodape {
     text-align: center;
-    padding: 20px;
-    border-top: 1px solid var(--borda);
+    padding: 30px 20px 40px;
+    border-top: 3px double var(--borda-forte);
     color: var(--texto-fraco);
+    font-family: var(--maquina);
     font-size: 12px;
+    letter-spacing: 0.04em;
 }
-.rodape p { margin: 4px 0; }
+.rodape p { margin: 5px 0; }
+.rodape .ornamento { color: var(--dourado); letter-spacing: 0.5em; margin-bottom: 12px; }
 
 /* ---------- busca de personagem (autocomplete) ---------- */
 .ac-wrap { position: relative; flex: 1; min-width: 0; }
@@ -178,35 +426,55 @@ input[type="text"], input[type="search"], select {
     right: 0;
     z-index: 50;
     background: var(--painel-claro);
-    border: 1px solid var(--borda);
-    border-radius: 10px;
+    border: 1px solid var(--borda-forte);
     overflow: hidden auto;
-    max-height: 330px;
-    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
+    max-height: 340px;
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.6);
 }
-
 .ac-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 7px 10px;
+    gap: 12px;
+    padding: 8px 12px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     transition: background 0.1s;
 }
-.ac-item + .ac-item { border-top: 1px solid rgba(255, 255, 255, 0.04); }
-.ac-item:hover, .ac-item.ativo { background: rgba(255, 144, 0, 0.16); }
-.ac-item.ativo { box-shadow: inset 3px 0 0 var(--laranja); }
+.ac-item + .ac-item { border-top: 1px solid rgba(216, 164, 60, 0.1); }
+.ac-item:hover, .ac-item.ativo { background: rgba(216, 164, 60, 0.14); }
+.ac-item.ativo { box-shadow: inset 3px 0 0 var(--dourado); }
 
 .ac-foto {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     flex: none;
-    border-radius: 7px;
     object-fit: cover;
-    background: #0d0d0f;
-    border: 1px solid var(--borda);
+    background: #0b0906;
+    border: 1px solid var(--borda-forte);
 }
 .ac-nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ac-nome mark { background: transparent; color: var(--dourado); font-weight: bold; }
 
-.ac-vazio { padding: 12px; color: var(--texto-fraco); font-size: 13px; text-align: center; }
+/* ---------- utilidades ---------- */
+.traco {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    color: var(--borda-forte);
+}
+.traco::before, .traco::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--borda);
+}
+
+@media (max-width: 640px) {
+    .capa-titulo { font-size: 38px; }
+    h1 { font-size: 27px; }
+    .palco { padding: 24px 14px 60px; }
+    .tarja { font-size: 10px; padding: 6px 14px; }
+    .topo-linha { padding: 10px 14px; }
+    .marca-nome { font-size: 22px; }
+}

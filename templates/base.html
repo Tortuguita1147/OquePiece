@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}QuePedaço{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
     {% block style %}{% endblock %}
 </head>
 <body>
     <header class="topo">
-        <a class="marca" href="{{ url_for('home') }}">
-            <span class="marca-caveira">☠️</span>
-            <span>Que<em>Pedaço</em></span>
-        </a>
-        <nav class="topo-nav">
-            <a href="{{ url_for('home') }}">Todos os jogos</a>
-            <a href="{{ url_for('personagens') }}">Personagens</a>
-        </nav>
+        <div class="tarja">
+            <span>Edição dos Sete Mares</span>
+            <span>{{ hoje }}</span>
+            <span>Preço: 100 Berries</span>
+        </div>
+        <div class="topo-linha">
+            <a class="marca" href="{{ url_for('home') }}">
+                <span class="marca-caveira">☠</span>
+                <span class="marca-nome">Que<em>Pedaço</em></span>
+            </a>
+            <nav class="topo-nav">
+                <a href="{{ url_for('home') }}">Todos os jogos</a>
+                <a href="{{ url_for('personagens') }}">Personagens</a>
+            </nav>
+        </div>
     </header>
 
     <main class="palco">
@@ -24,6 +34,7 @@
     </main>
 
     <footer class="rodape">
+        <div class="ornamento">✦ ☠ ✦</div>
         <p>QuePedaço — paródia de WhatPiece</p>
         <p>Créditos do nome: Victoria 🏴‍☠️</p>
     </footer>

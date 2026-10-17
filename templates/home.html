@@ -2,50 +2,24 @@
 
 {% block titulo %}QuePedaço — jogos de One Piece{% endblock %}
 
-{% block style %}
-<style>
-    .abertura { text-align: center; margin-bottom: 26px; }
-    .abertura h1 { font-size: 34px; letter-spacing: 1px; }
-    .abertura h1 em { color: var(--laranja); font-style: normal; }
-    .abertura p { color: var(--texto-fraco); max-width: 620px; margin: 8px auto 0; }
-    .destaque {
-        border: 1px solid var(--laranja);
-        background: linear-gradient(180deg, rgba(255,144,0,0.12), transparent);
-    }
-    .selo {
-        display: inline-block;
-        font-size: 11px;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #1a1206;
-        background: var(--laranja);
-        border-radius: 3px;
-        padding: 2px 7px;
-        margin-bottom: 8px;
-    }
-    .selo.em-breve { background: var(--texto-fraco); color: #1a1206; }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="abertura">
-    <h1>Bem-vindo ao Que<em>Pedaço</em></h1>
-    <p>Uma porção de minijogos de One Piece. Todo dia tem desafio novo e ainda dá pra treinar à vontade.</p>
-    <p style="font-size:12px;color:var(--texto-fraco);margin-top:12px">
-        {{ meta_dados.total_personagens }} personagens ·
-        {% if origem_dados == 'api' %}
-            dados ao vivo da API One Piece + OnePieceQL
-        {% else %}
-            modo offline (dicionário local)
-        {% endif %}
+<div class="capa">
+    <div class="regua">✦ Edição Extraordinária ✦</div>
+    <h1 class="capa-titulo">Bem-vindo ao Que<em>Pedaço</em></h1>
+    <p class="capa-linha">Dezesseis minijogos de One Piece · desafio novo todo dia</p>
+    <p class="capa-nota">
+        {{ meta_dados.total_personagens }} personagens no arquivo ·
+        {% if origem_dados == 'api' %}dados ao vivo da API One Piece{% else %}acervo local (modo offline){% endif %}
     </p>
 </div>
+
+<div class="secao-titulo"><span>Os jogos de hoje</span></div>
 
 <div class="grade-jogos">
     {% for jogo in lista_jogos %}
         <a class="cartao-jogo {% if loop.first %}destaque{% endif %}" href="{{ url_for(jogo.rota) }}">
             {% if loop.first %}<span class="selo">Jogo do dia</span>{% endif %}
+            <span class="numero">Nº {{ "%02d"|format(loop.index) }}</span>
             <div class="emoji">{{ jogo.emoji }}</div>
             <h2>{{ jogo.nome }}</h2>
             <p>{{ jogo.desc }}</p>

@@ -93,6 +93,14 @@ OquePiece/
     └── img/         # fotos opcionais (o resto vira retrato SVG na hora)
 ```
 
+## Visual
+
+O tema é uma **gazeta pirata**: tipografia editorial (Playfair Display + Oswald +
+Special Elite, via Google Fonts), réguas duplas, selos, textura de impressão e
+cartões numerados como cartazes de procurado. Os retratos são desenhados em SVG
+na hora. Sem depender de imagens externas — só das fontes do Google (se estiver
+sem internet, caem nos tipos do sistema).
+
 ## Busca de personagem
 
 Os campos de palpite usam uma lista própria (`static/js/busca.js`) que mostra

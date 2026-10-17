@@ -1,5 +1,6 @@
 import os
 import random
+from datetime import date
 
 from flask import (Flask, Response, jsonify, redirect, render_template,
                    request, session, url_for)
@@ -115,6 +116,7 @@ def injetar_ajudantes():
         "lista_jogos": LISTA_JOGOS,
         "meta_dados": META,
         "origem_dados": ORIGEM_DADOS,
+        "hoje": date.today().strftime("%d/%m/%Y"),
     }
 
 
