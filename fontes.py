@@ -1,26 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Camada de dados do QuePedaço.
-
-O site deixou de viver do dicionário fixo. Agora a base é montada assim:
-
-1. **Fonte principal** — API One Piece (https://api.api-onepiece.com/v2):
-   personagens, frutas e tripulações. Traz nome, altura, idade, recompensa,
-   tripulação, fruta e status de ~786 personagens.
-2. **Enriquecimento** — OnePieceQL (https://onepieceql.up.railway.app/graphql):
-   origem (Blue), estreia no anime e afiliações de ~1.345 personagens — campos
-   que a API principal não oferece.
-3. **Complemento local** — o dicionário em `dados.py`: gênero, raça, haki,
-   risada, arco, frases, grupos (Connections/Impostor) e Jolly Rogers.
-
-O resultado é gravado em `cache/personagens.json` e reaproveitado nas próximas
-execuções (rápido e funciona sem internet depois do primeiro build). Para baixar
-tudo de novo:
-
-    python fontes.py --atualizar
-
-Se a rede falhar e não houver cache, o site cai de volta no dicionário local.
-"""
-
 import json
 import os
 import re
@@ -39,13 +16,10 @@ API = "https://api.api-onepiece.com/v2"
 QL = "https://onepieceql.up.railway.app/graphql"
 QL_PAGINAS = 34
 
-# palavras que atrapalham o casamento de nomes (apelidos de dublagem etc.)
 RUIDO = {"viz", "odex", "funimation", "4kids", "dub", "subs", "sub", "wt100",
          "opcg", "uncut", "edited", "formerly", "media", "d", "the", "de",
          "dr", "la", "le", "les", "os", "as", "and"}
 
-# apelidos/erros de grafia que aparecem entre as fontes. chave = nome local
-# normalizado; valor = outras grafias que devem casar com ele.
 ALIASES = {
     "marshall d teach": ["marchall d teach", "marshall d teech"],
     "buggy": ["baggy", "buggy le clown"],
@@ -79,9 +53,7 @@ ALIASES = {
 }
 
 
-# ------------------------------------------------------------------
-# Utilidades de texto/número
-# ------------------------------------------------------------------
+# --- Utilidades de texto e número ---
 def _norm(texto):
     if not texto:
         return ""
@@ -92,7 +64,6 @@ def _norm(texto):
 
 
 def _candidatos(nome):
-    """Separa apelidos em variantes limpas (tira parênteses antes de dividir)."""
     if not nome:
         return []
     nome = re.sub(r"\(.*?\)", " ", nome)
@@ -107,7 +78,6 @@ def _candidatos(nome):
 
 
 def _chave(nome):
-    """Conjunto de chaves de um nome: tokens ordenados de cada variante."""
     return {" ".join(sorted(c.split())) for c in _candidatos(nome)}
 
 
@@ -190,7 +160,6 @@ def _status(s):
 def _afiliacao(crew):
     if not crew:
         return "Desconhecida"
-    # a API manda o objeto da tripulação: usamos o id pro dicionário em PT
     if isinstance(crew, dict):
         cid = crew.get("id")
         if cid in CREWS_PT:
@@ -226,9 +195,7 @@ def _afiliacao(crew):
     return limpo or "Desconhecida"
 
 
-# ------------------------------------------------------------------
-# Download
-# ------------------------------------------------------------------
+# --- Download das APIs ---
 def _get_json(url, dados=None, tries=3):
     for t in range(tries):
         try:
@@ -281,9 +248,7 @@ def baixar():
     print(f"Pronto: {len(ql)} personagens enriquecidos.", flush=True)
 
 
-# ------------------------------------------------------------------
-# Montagem da base
-# ------------------------------------------------------------------
+# --- Montagem da base ---
 def _ficha(nome):
     return {
         "nome": nome, "genero": "Desconhecido", "raca": "Desconhecido",
@@ -317,7 +282,6 @@ def _aplicar(destino, origem, campos):
 
 
 def montar():
-    """Junta API + OnePieceQL + dicionário local numa lista de personagens."""
     from dados import (PERSONAGENS as LOCAIS, FRUTAS as FRUTAS_LOCAIS,
                        GRUPOS as GRUPOS_LOCAIS, JOLLY_ROGERS, FRASES)
 
@@ -334,7 +298,7 @@ def montar():
     usados_api = set()
     usados_ql = set()
 
-    # 1) cada personagem da API vira uma ficha, enriquecida por local + QL
+    # 1) personagens da API (enriquecidos com local + OnePieceQL)
     for c in api:
         nome = (c.get("name") or "").split(" / ")[0].strip()
         local = _buscar(loc_idx, nome, alias_local=True)
@@ -377,7 +341,7 @@ def montar():
         fichas.append(f)
         usados_api.add(id(c))
 
-    # 2) personagens do dicionário que a API não tem (enriquecidos pela QL)
+    # 2) personagens do dicionário que a API não tem
     for p in LOCAIS:
         if _buscar(api_idx, p["nome"]) is not None:
             continue
@@ -397,7 +361,7 @@ def montar():
             f["fonte"].append("onepieceql")
         fichas.append(f)
 
-    # remove duplicatas por nome (não deve sobrar nenhuma, mas por segurança)
+    # 3) tira duplicatas e fotos que não existem
     vistos, personagens = set(), []
     img_dir = os.path.join(BASE, "static", "img")
     for f in fichas:
@@ -405,13 +369,12 @@ def montar():
         if k in vistos:
             continue
         vistos.add(k)
-        # se a foto local não existir no projeto, volta pro retrato SVG
         if f["foto"] and not os.path.exists(os.path.join(img_dir, f["foto"])):
             f["foto"] = None
         personagens.append(f)
     personagens.sort(key=lambda p: p["nome"].lower())
 
-    # ---- Frutas: derivadas dos personagens + traduções do dicionário ----
+    # 4) frutas
     frutas, vistos_fruta = [], set()
     for p in personagens:
         if not p["fruta"] or p["fruta"] == "Nenhuma":
@@ -427,7 +390,7 @@ def montar():
             vistos_fruta.add(_norm(nome))
             frutas.append((nome, tipo, usuario, traducao))
 
-    # ---- Grupos: membros reescritos com o nome canônico ----
+    # 5) grupos e frases com nomes canônicos
     nome_por_chave = {}
     for p in personagens:
         for k in _chaves(p["nome"]):
@@ -485,9 +448,7 @@ def carregar():
         return json.load(f)
 
 
-# ------------------------------------------------------------------
-# API do módulo
-# ------------------------------------------------------------------
+# --- API do módulo ---
 try:
     _DADOS = carregar()
     PERSONAGENS = _DADOS["personagens"]

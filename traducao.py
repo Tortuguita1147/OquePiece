@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-"""Traduções dos dados que vêm da API (que é em francês/inglês).
-
-A API One Piece devolve os nomes das tripulações em francês/inglês
-("The Chapeau de Paille crew", "Barbe Noire"...). Aqui a gente traduz para
-português, usando o **id** da tripulação como chave.
-"""
-
-# id da tripulação na API -> nome em português
+# Tradução das tripulações da API (francês/inglês) para português.
+# chave = id da tripulação na API.
 CREWS_PT = {
     1: "Piratas do Chapéu de Palha",
     2: "Piratas do Ruivo",

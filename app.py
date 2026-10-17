@@ -14,7 +14,6 @@ app.secret_key = "quepedaco_chave_secreta_do_mestre_dos_mares"
 
 
 def carregar_env():
-    """Lê o arquivo .env (se existir) e joga as chaves no ambiente."""
     caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
     if not os.path.exists(caminho):
         return
@@ -26,7 +25,8 @@ def carregar_env():
             chave, valor = linha.split("=", 1)
             os.environ.setdefault(chave.strip(), valor.strip())
 
-# índice nome -> personagem (também usado nas buscas)
+
+# --- Índices e lista de jogos ---
 INDICE = {p["nome"]: p for p in PERSONAGENS}
 
 LISTA_JOGOS = [
@@ -65,9 +65,7 @@ LISTA_JOGOS = [
 ]
 
 
-# ------------------------------------------------------------------
-# Utilidades
-# ------------------------------------------------------------------
+# --- Utilidades ---
 def sem_acento(texto):
     trocas = {"á": "a", "à": "a", "ã": "a", "â": "a", "ä": "a",
               "é": "e", "ê": "e", "è": "e", "í": "i", "î": "i",
@@ -83,7 +81,6 @@ def achar_personagem(texto):
     for nome, p in INDICE.items():
         if sem_acento(nome) == alvo:
             return p
-    # aceita só o primeiro nome também (ex.: "luffy")
     for nome, p in INDICE.items():
         if sem_acento(nome).split()[0] == alvo:
             return p
@@ -91,10 +88,6 @@ def achar_personagem(texto):
 
 
 def modo(jogo):
-    """Devolve a seed do modo treino, ou None pro desafio do dia.
-
-    O botão "Treino" chama a rota com ?treino=1, que gera uma seed nova.
-    """
     if request.args.get("treino"):
         session[f"{jogo}_seed"] = random.randrange(1, 10 ** 9)
     return session.get(f"{jogo}_seed")
@@ -123,9 +116,7 @@ def injetar_ajudantes():
 app.jinja_env.filters["formato_berries"] = jogos.formatar_berries
 
 
-# ------------------------------------------------------------------
-# Início
-# ------------------------------------------------------------------
+# --- Início ---
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -142,9 +133,7 @@ def retrato(nome):
     return Response(svg, mimetype="image/svg+xml")
 
 
-# ------------------------------------------------------------------
-# 1) Adivinhar Personagem
-# ------------------------------------------------------------------
+# --- 1) Adivinhar Personagem ---
 @app.route("/personagens")
 def personagens():
     seed = modo("personagens")
@@ -178,9 +167,7 @@ def reiniciar():
     return redirect(url_for("personagens"))
 
 
-# ------------------------------------------------------------------
-# 2) Wordle
-# ------------------------------------------------------------------
+# --- 2) Wordle ---
 @app.route("/wordle", methods=["GET", "POST"])
 def wordle():
     seed = modo("wordle")
@@ -214,9 +201,7 @@ def wordle_reiniciar():
     return redirect(url_for("wordle"))
 
 
-# ------------------------------------------------------------------
-# 3) Pirâmide
-# ------------------------------------------------------------------
+# --- 3) Pirâmide ---
 @app.route("/piramide", methods=["GET", "POST"])
 def piramide():
     seed = modo("piramide")
@@ -248,9 +233,7 @@ def piramide_reiniciar():
     return redirect(url_for("piramide"))
 
 
-# ------------------------------------------------------------------
-# 4) Grid
-# ------------------------------------------------------------------
+# --- 4) Grid ---
 @app.route("/grid", methods=["GET", "POST"])
 def grid():
     seed = modo("grid")
@@ -306,9 +289,7 @@ def grid_reiniciar():
     return redirect(url_for("grid"))
 
 
-# ------------------------------------------------------------------
-# 5) Maior ou Menor
-# ------------------------------------------------------------------
+# --- 5) Maior ou Menor ---
 @app.route("/maior-menor", methods=["GET", "POST"])
 def higher_lower():
     seed = modo("higher_lower")
@@ -361,9 +342,7 @@ def hl_reiniciar():
     return redirect(url_for("higher_lower"))
 
 
-# ------------------------------------------------------------------
-# 6) Connections
-# ------------------------------------------------------------------
+# --- 6) Connections ---
 @app.route("/connections", methods=["GET", "POST"])
 def connections():
     seed = modo("connections")
@@ -425,9 +404,7 @@ def connections_reiniciar():
     return redirect(url_for("connections"))
 
 
-# ------------------------------------------------------------------
-# 7) Bingo
-# ------------------------------------------------------------------
+# --- 7) Bingo ---
 @app.route("/bingo", methods=["GET", "POST"])
 def bingo():
     seed = modo("bingo")
@@ -473,9 +450,7 @@ def bingo_reiniciar():
     return redirect(url_for("bingo"))
 
 
-# ------------------------------------------------------------------
-# 8) Wanted
-# ------------------------------------------------------------------
+# --- 8) Wanted ---
 @app.route("/wanted", methods=["GET", "POST"])
 def wanted():
     seed = modo("wanted")
@@ -500,7 +475,6 @@ def wanted():
 
     venceu = session.get("wanted_venceu", False)
     erros = session["wanted_erros"]
-    # cada erro diminui o desfoque
     borrao = max(0, 14 - erros * 2)
     return render_template("wanted.html", alvo=alvo, erros=erros, borrao=borrao,
                            dica=dica, erro=erro, venceu=venceu)
@@ -513,9 +487,7 @@ def wanted_reiniciar():
     return redirect(url_for("wanted"))
 
 
-# ------------------------------------------------------------------
-# 9) Adivinhar Fruta
-# ------------------------------------------------------------------
+# --- 9) Adivinhar Fruta ---
 @app.route("/fruta", methods=["GET", "POST"])
 def fruta():
     seed = modo("fruta")
@@ -553,9 +525,7 @@ def fruta_reiniciar():
     return redirect(url_for("fruta"))
 
 
-# ------------------------------------------------------------------
-# 10) Jolly Roger
-# ------------------------------------------------------------------
+# --- 10) Jolly Roger ---
 @app.route("/jolly-roger", methods=["GET", "POST"])
 def jolly_roger():
     seed = modo("jolly_roger")
@@ -583,9 +553,7 @@ def jr_reiniciar():
     return redirect(url_for("jolly_roger"))
 
 
-# ------------------------------------------------------------------
-# 11) Impostor
-# ------------------------------------------------------------------
+# --- 11) Impostor ---
 @app.route("/impostor", methods=["GET", "POST"])
 def impostor():
     seed = modo("impostor")
@@ -622,9 +590,7 @@ def impostor_reiniciar():
     return redirect(url_for("impostor"))
 
 
-# ------------------------------------------------------------------
-# 12) Identidade (sim ou não)
-# ------------------------------------------------------------------
+# --- 12) Identidade ---
 PERGUNTAS = [
     {"texto": "É mulher?", "teste": lambda p: p["genero"] == "Feminino"},
     {"texto": "Usa Fruta do Diabo?", "teste": lambda p: p["fruta"] != "Nenhuma"},
@@ -677,9 +643,7 @@ def identidade_reiniciar():
     return redirect(url_for("identidade"))
 
 
-# ------------------------------------------------------------------
-# 13) Adivinhar a Risa
-# ------------------------------------------------------------------
+# --- 13) Adivinhar a Risa ---
 @app.route("/risa", methods=["GET", "POST"])
 def risa():
     seed = modo("risa")
@@ -706,9 +670,7 @@ def risa_reiniciar():
     return redirect(url_for("risa"))
 
 
-# ------------------------------------------------------------------
-# 14) Sopa de Letras
-# ------------------------------------------------------------------
+# --- 14) Sopa de Letras ---
 @app.route("/sopa")
 def sopa():
     seed = modo("sopa")
@@ -716,9 +678,7 @@ def sopa():
     return render_template("sopa.html", grade=dados["grade"], palavras=dados["palavras"])
 
 
-# ------------------------------------------------------------------
-# 15) Adivinhar Episódio
-# ------------------------------------------------------------------
+# --- 15) Adivinhar Episódio ---
 @app.route("/episodio", methods=["GET", "POST"])
 def episodio():
     seed = modo("episodio")
@@ -747,9 +707,7 @@ def episodio_reiniciar():
     return redirect(url_for("episodio"))
 
 
-# ------------------------------------------------------------------
-# 16) Nakama Draft
-# ------------------------------------------------------------------
+# --- 16) Nakama Draft ---
 ORCAMENTO = 8000000000
 
 
@@ -783,9 +741,8 @@ def draft_reiniciar():
     return redirect(url_for("draft"))
 
 
-
+# --- Inicialização ---
 if __name__ == '__main__':
-    # ngrok: lê o token do .env (ou da variável NGROK_AUTHTOKEN) e abre o link público
     carregar_env()
     token = os.environ.get("NGROK_AUTHTOKEN")
     if token:

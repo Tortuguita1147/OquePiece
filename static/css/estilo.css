@@ -1,6 +1,4 @@
-/* QuePedaço — estilo "Gazeta dos Sete Mares".
-   Estética de jornal antigo / cartaz de procurado: tipografia editorial,
-   réguas duplas, selos e textura de impressão. Sem gradientes coloridos. */
+/* QuePedaço — tema gazeta pirata */
 
 :root {
     /* superfícies */
@@ -17,7 +15,7 @@
     --papel: #e9dcbd;
 
     /* cores de destaque */
-    --laranja: #d8a43c;   /* dourado/âmbar da marca */
+    --laranja: #d8a43c;
     --dourado: #d8a43c;
     --verde: #3f7d54;
     --vermelho: #b23a2e;
@@ -48,7 +46,7 @@ body {
     flex-direction: column;
 }
 
-/* grão de impressão por cima de tudo (não intercepta clique) */
+/* grão de impressão */
 body::before {
     content: "";
     position: fixed;
@@ -62,7 +60,7 @@ body::before {
 a { color: var(--dourado); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-/* ---------- topo / cabeçalho ---------- */
+/* --- topo / cabeçalho --- */
 .topo {
     position: sticky;
     top: 0;
@@ -136,7 +134,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 .topo-nav a:hover { color: var(--texto); border-bottom-color: var(--dourado); text-decoration: none; }
 
-/* ---------- palco ---------- */
+/* --- palco --- */
 .palco {
     flex: 1;
     width: 100%;
@@ -147,7 +145,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
     z-index: 1;
 }
 
-/* ---------- títulos ---------- */
+/* --- títulos --- */
 h1 {
     font-family: var(--serif);
     font-weight: 900;
@@ -182,7 +180,7 @@ h3 { font-family: var(--cond); text-transform: uppercase; letter-spacing: 0.08em
     max-width: 720px;
 }
 
-/* ---------- painéis ---------- */
+/* --- painéis --- */
 .painel {
     position: relative;
     background: var(--painel);
@@ -198,7 +196,7 @@ h3 { font-family: var(--cond); text-transform: uppercase; letter-spacing: 0.08em
     pointer-events: none;
 }
 
-/* ---------- botões ---------- */
+/* --- botões --- */
 button, .botao {
     font-family: var(--cond);
     font-size: 14px;
@@ -228,7 +226,7 @@ button:active, .botao:active { transform: translateY(2px); box-shadow: none; }
 }
 .botao-fraco:hover { color: var(--texto); border-color: var(--dourado); filter: none; }
 
-/* ---------- campos ---------- */
+/* --- campos --- */
 input[type="text"], input[type="search"], select {
     font-family: var(--corpo);
     font-size: 16px;
@@ -248,7 +246,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
 
 .acoes { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 18px; }
 
-/* ---------- avisos ---------- */
+/* --- avisos --- */
 .aviso {
     padding: 12px 16px;
     border: 1px solid var(--dourado);
@@ -260,7 +258,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
 .aviso.erro { border-color: var(--vermelho); background: rgba(178, 58, 46, 0.12); }
 .aviso.bom { border-color: var(--verde); background: rgba(63, 125, 84, 0.14); }
 
-/* ---------- capa (home) ---------- */
+/* --- capa (home) --- */
 .capa { text-align: center; padding: 8px 0 4px; }
 .capa .regua {
     display: flex;
@@ -320,7 +318,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
     background: var(--borda);
 }
 
-/* ---------- grade de jogos ---------- */
+/* --- grade de jogos --- */
 .grade-jogos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
@@ -402,7 +400,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* ---------- rodapé ---------- */
+/* --- rodapé --- */
 .rodape {
     text-align: center;
     padding: 30px 20px 40px;
@@ -415,7 +413,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
 .rodape p { margin: 5px 0; }
 .rodape .ornamento { color: var(--dourado); letter-spacing: 0.5em; margin-bottom: 12px; }
 
-/* ---------- busca de personagem (autocomplete) ---------- */
+/* --- busca de personagem (autocomplete) --- */
 .ac-wrap { position: relative; flex: 1; min-width: 0; }
 .ac-wrap input { width: 100%; }
 
@@ -455,7 +453,7 @@ input[type="text"]:focus, input[type="search"]:focus, select:focus {
 .ac-nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ac-nome mark { background: transparent; color: var(--dourado); font-weight: bold; }
 
-/* ---------- utilidades ---------- */
+/* --- utilidades --- */
 .traco {
     display: flex;
     align-items: center;

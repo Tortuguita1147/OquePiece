@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Testa a jogabilidade de verdade (POSTs + sessão) com o test client do Flask.
-
-Roda com:  python3 teste_jogo.py
-"""
 import os
 import sys
 
@@ -20,7 +15,7 @@ def check(cond, msg):
         print("  FALHA:", msg)
 
 
-# ---- Adivinhar Personagem (/palpite) ----
+# --- Adivinhar Personagem ---
 with app.test_client() as c:
     c.get("/personagens?treino=1")
     with c.session_transaction() as s:
@@ -33,7 +28,7 @@ with app.test_client() as c:
     check(bool(hist) and hist[0].get("venceu") is True,
           "adivinhar personagem não detectou acerto")
 
-# ---- Wordle ----
+# --- Wordle ---
 with app.test_client() as c:
     c.get("/wordle?treino=1")
     with c.session_transaction() as s:
@@ -47,7 +42,7 @@ with app.test_client() as c:
         check(any(t["palpite"].upper() == alvo.upper() for t in tent),
               "wordle não registrou o palpite")
 
-# ---- Pirâmide ----
+# --- Pirâmide ---
 with app.test_client() as c:
     c.get("/piramide?treino=1")
     with c.session_transaction() as s:
@@ -56,7 +51,7 @@ with app.test_client() as c:
         r = c.post("/piramide", data={"ordem": "|".join(ordem)}, follow_redirects=True)
         check(r.status_code == 200, "pirâmide POST status")
 
-# ---- Grid ----
+# --- Grid ---
 with app.test_client() as c:
     c.get("/grid?treino=1")
     with c.session_transaction() as s:
@@ -67,13 +62,13 @@ with app.test_client() as c:
                    follow_redirects=True)
         check(r.status_code == 200, "grid POST status")
 
-# ---- Maior ou Menor ----
+# --- Maior ou Menor ---
 with app.test_client() as c:
     c.get("/maior-menor?treino=1")
     r = c.post("/maior-menor", data={"escolha": "maior"}, follow_redirects=True)
     check(r.status_code == 200, "maior-menor POST status")
 
-# ---- Connections ----
+# --- Connections ---
 with app.test_client() as c:
     c.get("/connections?treino=1")
     with c.session_transaction() as s:
@@ -83,13 +78,13 @@ with app.test_client() as c:
         r = c.post("/connections", data={"escolhido": g}, follow_redirects=True)
         check(r.status_code == 200, "connections POST status")
 
-# ---- Bingo ----
+# --- Bingo ---
 with app.test_client() as c:
     c.get("/bingo?treino=1")
     r = c.post("/bingo", data={"acao": "pular"}, follow_redirects=True)
     check(r.status_code == 200, "bingo POST status")
 
-# ---- Wanted ----
+# --- Wanted ---
 with app.test_client() as c:
     c.get("/wanted?treino=1")
     with c.session_transaction() as s:
@@ -98,7 +93,7 @@ with app.test_client() as c:
         r = c.post("/wanted", data={"palpite": alvo}, follow_redirects=True)
         check(r.status_code == 200, "wanted POST status")
 
-# ---- Fruta ----
+# --- Fruta ---
 with app.test_client() as c:
     c.get("/fruta?treino=1")
     with c.session_transaction() as s:
@@ -107,7 +102,7 @@ with app.test_client() as c:
         r = c.post("/fruta", data={"palpite": usuario}, follow_redirects=True)
         check(r.status_code == 200, "fruta POST status")
 
-# ---- Jolly Roger ----
+# --- Jolly Roger ---
 with app.test_client() as c:
     c.get("/jolly-roger?treino=1")
     with c.session_transaction() as s:
@@ -116,7 +111,7 @@ with app.test_client() as c:
         r = c.post("/jolly-roger", data={"escolha": alvo}, follow_redirects=True)
         check(r.status_code == 200, "jolly roger POST status")
 
-# ---- Impostor ----
+# --- Impostor ---
 with app.test_client() as c:
     c.get("/impostor?treino=1")
     with c.session_transaction() as s:
@@ -126,14 +121,14 @@ with app.test_client() as c:
                    follow_redirects=True)
         check(r.status_code == 200, "impostor POST status")
 
-# ---- Identidade ----
+# --- Identidade ---
 with app.test_client() as c:
     c.get("/identidade?treino=1")
     r = c.post("/identidade", data={"acao": "perguntar", "pergunta": "0"},
                follow_redirects=True)
     check(r.status_code == 200, "identidade POST status")
 
-# ---- Risa ----
+# --- Risa ---
 with app.test_client() as c:
     c.get("/risa?treino=1")
     with c.session_transaction() as s:
@@ -142,7 +137,7 @@ with app.test_client() as c:
         r = c.post("/risa", data={"palpite": alvo}, follow_redirects=True)
         check(r.status_code == 200, "risa POST status")
 
-# ---- Episódio ----
+# --- Episódio ---
 with app.test_client() as c:
     c.get("/episodio?treino=1")
     with c.session_transaction() as s:
@@ -152,7 +147,7 @@ with app.test_client() as c:
         r = c.post("/episodio", data={"escolha": opcoes[0]}, follow_redirects=True)
         check(r.status_code == 200, "episódio POST status")
 
-# ---- Draft ----
+# --- Draft ---
 with app.test_client() as c:
     c.get("/draft?treino=1")
     r = c.post("/draft", data={}, follow_redirects=True)

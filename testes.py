@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Testes rapidos do QuePedaço.
-Roda com:  python3 testes.py
-
-Confere a integridade da base montada (API + enriquecimento + dicionário) e
-que nenhum gerador quebra em nenhuma seed.
-"""
 from collections import Counter
 
 import jogos
@@ -14,7 +6,7 @@ from fontes import PERSONAGENS, GRUPOS, FRUTAS, JOLLY_ROGERS, FRASES, META
 nomes = {p["nome"] for p in PERSONAGENS}
 problemas = []
 
-# --- 1. integridade dos dados ---------------------------------------------
+# --- Integridade dos dados ---
 for grupo, membros in GRUPOS.items():
     for m in membros:
         if m not in nomes:
@@ -32,8 +24,6 @@ duplicados = [n for n, c in Counter(p["nome"] for p in PERSONAGENS).items() if c
 if duplicados:
     problemas.append(f"personagens duplicados: {duplicados}")
 
-# a base vem de fontes externas: nem todo campo existe pra todo mundo.
-# aqui só garantimos que os campos numéricos têm o tipo certo.
 for p in PERSONAGENS:
     if not p.get("nome"):
         problemas.append("personagem sem nome")
@@ -49,7 +39,7 @@ for p in PERSONAGENS:
     except (TypeError, ValueError):
         problemas.append(f"'{p['nome']}' com altura inválida")
 
-# --- 2. geradores em varias seeds -----------------------------------------
+# --- Geradores ---
 SEEDS = 200
 
 
@@ -59,7 +49,7 @@ def conta_falhas(nome, fn, valida):
         try:
             if not valida(fn(s)):
                 ruins += 1
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             problemas.append(f"{nome}(seed={s}) estourou: {e!r}")
             ruins += 1
     print(f"  {nome:<14} {SEEDS - ruins}/{SEEDS} ok")

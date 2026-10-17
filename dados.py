@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Base de dados do QuePedaço (paródia de escola do WhatPiece).
 
-Tudo fica aqui em dicionários simples pra ficar fácil de aumentar depois.
-Se quiser adicionar um personagem, só copiar uma linha da lista PERSONAGENS
-e preencher na ordem dos campos. Os retratos são desenhados em SVG na hora,
-então não precisa baixar imagem nenhuma (só os três que já vieram no projeto).
-"""
-
-# atalhos de haki pra não escrever emoji toda hora
+# haki
 HAO = "👑"      # Haoshoku
 BUSO = "💪🏿"    # Busoshoku
 KEN = "👁️"      # Kenbunshoku
@@ -16,7 +9,6 @@ NADA = "Nenhum"
 
 def _p(nome, genero, raca, afiliacao, status, fruta, fruta_tipo, haki,
        recompensa, altura, idade, origem, arco, episodio, risada, foto=None):
-    """Monta o dicionário de um personagem (ordem fixa de campos)."""
     return {
         "nome": nome,
         "genero": genero,
@@ -26,21 +18,20 @@ def _p(nome, genero, raca, afiliacao, status, fruta, fruta_tipo, haki,
         "fruta": fruta,
         "fruta_tipo": fruta_tipo,
         "haki": haki,
-        "recompensa": recompensa,   # em berries, 0 = sem recompensa
-        "altura": altura,           # metros
-        "idade": idade,             # anos
+        "recompensa": recompensa,
+        "altura": altura,
+        "idade": idade,
         "origem": origem,
         "arco": arco,
-        "episodio": episodio,       # episódio de estreia
+        "episodio": episodio,
         "risada": risada,
-        "foto": foto,               # arquivo em static/img ou None (usa SVG)
+        "foto": foto,
     }
 
 
-# ordem: nome, genero, raca, afiliacao, status, fruta, tipo, haki,
-#        recompensa, altura, idade, origem, arco, episodio, risada, foto
+# ordem dos campos
 PERSONAGENS = [
-    # ---------------- Chapéu de Palha ----------------
+    # --- Chapéu de Palha ---
     _p("Monkey D. Luffy", "Masculino", "Humano", "Piratas do Chapéu de Palha", "Vivo",
        "Hito Hito no Mi: Modelo Nika", "Zoan Mítica", f"{HAO} {BUSO} {KEN}",
        3000000000, 1.74, 19, "East Blue", "Romance Dawn", 1, "Shishishi", "luffymose.jpeg"),
@@ -72,7 +63,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        1100000000, 3.01, 46, "Grand Line", "Impel Down", 430, ""),
 
-    # ---------------- Yonkou e tripulações ----------------
+    # --- Yonkou e tripulações ---
     _p("Shanks", "Masculino", "Humano", "Piratas do Ruivo", "Vivo",
        "Nenhuma", "Nenhuma", f"{HAO} {BUSO} {KEN}",
        4048900000, 1.99, 39, "West Blue", "Romance Dawn", 4, ""),
@@ -125,7 +116,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", KEN,
        0, 1.83, 47, "East Blue", "Romance Dawn", 4, ""),
 
-    # ---------------- Marinha e Governo ----------------
+    # --- Marinha e Governo ---
     _p("Sakazuki", "Masculino", "Humano", "Marinha", "Vivo",
        "Magu Magu no Mi", "Logia", f"{BUSO} {KEN}",
        5000000000, 3.06, 55, "North Blue", "Marineford", 278, ""),
@@ -169,7 +160,7 @@ PERSONAGENS = [
        "Ori Ori no Mi", "Paramecia", f"{BUSO} {KEN}",
        0, 1.80, 34, "South Blue", "Alabasta", 100, ""),
 
-    # ---------------- Shichibukai / Cross Guild ----------------
+    # --- Shichibukai / Cross Guild ---
     _p("Dracule Mihawk", "Masculino", "Humano", "Cross Guild", "Vivo",
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        3590000000, 1.98, 43, "Grand Line", "Baratie", 23, ""),
@@ -201,7 +192,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        200000000, 1.95, 27, "South Blue", "Sabaody", 392, ""),
 
-    # ---------------- Supernovas ----------------
+    # --- Supernovas ---
     _p("Basil Hawkins", "Masculino", "Humano", "Piratas do Hawkins", "Vivo",
        "Wara Wara no Mi", "Paramecia", KEN,
        320000000, 2.10, 31, "North Blue", "Sabaody", 392, ""),
@@ -224,7 +215,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", f"{HAO} {BUSO} {KEN}",
        0, 1.88, 78, "East Blue", "Sabaody", 400, ""),
 
-    # ---------------- Revolucionários ----------------
+    # --- Revolucionários ---
     _p("Monkey D. Dragon", "Masculino", "Humano", "Exército Revolucionário", "Vivo",
        "Nenhuma", "Nenhuma", KEN,
        0, 2.56, 55, "East Blue", "Loguetown", 52, ""),
@@ -238,7 +229,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        0, 1.60, 23, "East Blue", "Dressrosa", 660, ""),
 
-    # ---------------- Frota e aliados ----------------
+    # --- Frota e aliados ---
     _p("Bartolomeo", "Masculino", "Humano", "Barto Club", "Vivo",
        "Bari Bari no Mi", "Paramecia", f"{BUSO} {KEN}",
        200000000, 1.80, 24, "East Blue", "Dressrosa", 705, ""),
@@ -270,7 +261,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 1.76, 26, "Grand Line", "Whole Cake", 825, ""),
 
-    # ---------------- Wano ----------------
+    # --- Wano ---
     _p("Kozuki Oden", "Masculino", "Humano", "Piratas do Roger", "Morto",
        "Nenhuma", "Nenhuma", f"{HAO} {BUSO} {KEN}",
        0, 3.82, 39, "Grand Line", "Wano", 960, ""),
@@ -296,7 +287,7 @@ PERSONAGENS = [
        "Hebi Hebi no Mi: Modelo Yamata no Orochi", "Zoan Mítica", f"{BUSO} {KEN}",
        0, 3.50, 54, "Grand Line", "Wano", 922, ""),
 
-    # ---------------- Vilões clássicos ----------------
+    # --- Vilões clássicos ---
     _p("Arlong", "Masculino", "Homem-Peixe", "Piratas do Arlong", "Vivo",
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        20000000, 2.63, 41, "Grand Line", "Arlong Park", 31, ""),
@@ -355,7 +346,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        0, 1.94, 21, "North Blue", "Whole Cake", 801, ""),
 
-    # ---------------- Alabasta, Skypiea e sereias ----------------
+    # --- Alabasta, Skypiea e sereias ---
     _p("Nefertari Vivi", "Feminino", "Humano", "Alabasta", "Viva",
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        0, 1.68, 20, "Grand Line", "Whiskey Peak", 64, ""),
@@ -381,7 +372,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 1.60, 18, "Grand Line", "Sabaody", 385, ""),
 
-    # ---------------- Extras pedidos pelo fandom ----------------
+    # --- Extras pedidos pelo fandom ---
     _p("Boa Sandersonia", "Feminino", "Humano", "Piratas Kuja", "Viva",
        "Hebi Hebi no Mi: Modelo Anaconda", "Zoan", f"{BUSO} {KEN}",
        40000000, 1.81, 29, "Grand Line", "Amazon Lily", 409, ""),
@@ -455,7 +446,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 1.78, 28, "East Blue", "Orange Town", 5, ""),
 
-    # ---------------- Lendas, Impel Down e CP9 ----------------
+    # --- Lendas, Impel Down e CP9 ---
     _p("Gol D. Roger", "Masculino", "Humano", "Piratas do Roger", "Morto",
        "Nenhuma", "Nenhuma", f"{HAO} {BUSO} {KEN}",
        5564800000, 2.74, 53, "East Blue", "Romance Dawn", 1, ""),
@@ -508,7 +499,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 3.14, 65, "Grand Line", "Egghead", 1086, ""),
 
-    # ---------------- Mink, Zou e Wano ----------------
+    # --- Mink, Zou e Wano ---
     _p("Carrot", "Feminino", "Mink", "Piratas do Chapéu de Palha", "Viva",
        "Nenhuma", "Nenhuma", NADA,
        0, 1.61, 15, "Grand Line", "Zou", 751, ""),
@@ -546,7 +537,7 @@ PERSONAGENS = [
        "Toki Toki no Mi", "Paramecia", NADA,
        0, 1.68, 36, "Wano", "Wano", 920, ""),
 
-    # ---------------- Piratas das Feras e Big Mom ----------------
+    # --- Piratas das Feras e Big Mom ---
     _p("Ulti", "Feminino", "Humano", "Piratas das Feras", "Viva",
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        400000000, 1.73, 22, "Grand Line", "Wano", 977, ""),
@@ -578,7 +569,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 2.30, 42, "Grand Line", "Whole Cake Island", 786, ""),
 
-    # ---------------- Revolucionários, Dressrosa e marinha ----------------
+    # --- Revolucionários, Dressrosa e marinha ---
     _p("Karasu", "Masculino", "Humano", "Revolucionários", "Vivo",
        "Nenhuma", "Nenhuma", f"{BUSO} {KEN}",
        0, 2.00, 30, "Grand Line", "Dressrosa", 700, ""),
@@ -622,7 +613,7 @@ PERSONAGENS = [
        "Nenhuma", "Nenhuma", NADA,
        0, 2.20, 30, "Grand Line", "Sabaody", 384, ""),
 
-    # ---------------- Thriller Bark e Ilha dos Homens-Peixe ----------------
+    # --- Thriller Bark e Ilha dos Homens-Peixe ---
     _p("Absalom", "Masculino", "Humano", "Piratas do Thriller Bark", "Morto",
        "Suke Suke no Mi", "Paramecia", NADA,
        0, 1.95, 34, "Grand Line", "Thriller Bark", 337, ""),
@@ -649,9 +640,7 @@ PERSONAGENS = [
        0, 1.90, 60, "Grand Line", "Drum Island", 78, ""),
 ]
 
-# ------------------------------------------------------------------
-# Frutas do Diabo (nome, tipo, usuário principal, tradução)
-# ------------------------------------------------------------------
+# --- Frutas do Diabo (nome, tipo, usuário principal, tradução) ---
 FRUTAS = [
     ("Gomu Gomu no Mi / Hito Hito no Mi: Modelo Nika", "Zoan Mítica", "Monkey D. Luffy", "Fruta da Borracha / Humano Modelo Nika"),
     ("Hana Hana no Mi", "Paramecia", "Nico Robin", "Fruta da Flor"),
@@ -725,9 +714,7 @@ FRUTAS = [
     ("Oshi Oshi no Mi", "Paramecia", "Morley", "Fruta do Empurrão de Terra"),
 ]
 
-# ------------------------------------------------------------------
-# Grupos pra jogos de associação (Connections / Impostor)
-# ------------------------------------------------------------------
+# --- Grupos pra jogos de associação (Connections / Impostor) ---
 GRUPOS = {
     "Chapéu de Palha": ["Monkey D. Luffy", "Roronoa Zoro", "Nami", "Usopp",
                         "Sanji", "Tony Tony Chopper", "Nico Robin", "Franky",
@@ -784,10 +771,7 @@ GRUPOS = {
     "Thriller Bark": ["Gecko Moria", "Absalom", "Hogback", "Ryuma", "Perona"],
 }
 
-# ------------------------------------------------------------------
-# Tripulações e seus Jolly Rogers (pro jogo do Jolly Roger)
-# O desenho é montado em SVG na hora, então só guardamos o "tema".
-# ------------------------------------------------------------------
+# --- Tripulações e seus Jolly Rogers (pro jogo do Jolly Roger) ---
 JOLLY_ROGERS = [
     {"tripulacao": "Piratas do Chapéu de Palha", "dica": "Chapéu de palha em cima da caveira", "emoji": "👒"},
     {"tripulacao": "Piratas do Ruivo", "dica": "Caveira com três cicatrizes no olho esquerdo", "emoji": "🩸"},
@@ -806,9 +790,7 @@ JOLLY_ROGERS = [
     {"tripulacao": "Baroque Works", "dica": "Caveira com uma rosa entre os dentes", "emoji": "🌹"},
 ]
 
-# ------------------------------------------------------------------
-# Frases de efeito por personagem (pro jogo "Quem disse?")
-# ------------------------------------------------------------------
+# --- Frases de efeito por personagem (pro jogo "Quem disse?") ---
 FRASES = [
     ("Eu vou ser o Rei dos Piratas!", "Monkey D. Luffy"),
     ("Nada aconteceu.", "Roronoa Zoro"),

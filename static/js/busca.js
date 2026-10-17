@@ -1,5 +1,4 @@
-/* Busca de personagem com miniatura.
-   Substitui o <datalist> nativo por uma lista estilizada com o retrato. */
+/* Busca de personagem com miniatura */
 (function () {
     var lista = window.LISTA_PERSONAGENS || [];
 

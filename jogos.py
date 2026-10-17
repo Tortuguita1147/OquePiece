@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Funções dos jogos do QuePedaço.
-
-A ideia é deixar a regra de cada jogo aqui e o app.py só chamar.
-Assim dá pra testar cada jogo sem subir o servidor.
-
-Cada gerador aceita um "seed" opcional:
-  - sem seed  -> desafio do dia (igual pra todo mundo naquele dia)
-  - com seed  -> modo treino (aleatório a cada partida)
-"""
-
 import hashlib
 import random
 from datetime import date
@@ -16,7 +5,6 @@ from datetime import date
 from fontes import (PERSONAGENS, FRUTAS, GRUPOS, JOLLY_ROGERS, FRASES,
                     COM_RECOMPENSA, COM_RISADA, COM_EPISODIO)
 
-# índice por nome pra busca rápida
 POR_NOME = {p["nome"]: p for p in PERSONAGENS}
 
 
@@ -24,9 +12,7 @@ def pegar(nome):
     return POR_NOME.get(nome)
 
 
-# ------------------------------------------------------------------
-# Sorteio "do dia": mesma coisa pra todo mundo no mesmo dia.
-# ------------------------------------------------------------------
+# --- Sorteio do dia ---
 def _semente(sal, seed=None):
     if seed is not None:
         return seed
@@ -42,9 +28,7 @@ def do_dia(lista, sal, seed=None):
     return lista[r.randrange(len(lista))]
 
 
-# ------------------------------------------------------------------
-# Retrato em SVG (não precisa de imagem pronta)
-# ------------------------------------------------------------------
+# --- Retrato SVG ---
 PALETA = [
     ("#ff9000", "#7a3d00"), ("#26d07c", "#0d5c37"), ("#3d8bfd", "#123a75"),
     ("#e8433f", "#6e1512"), ("#9b5de5", "#3f1c68"), ("#f2c14e", "#7a5b0a"),
@@ -65,7 +49,6 @@ def iniciais(nome):
 
 
 def retrato_svg(nome, largura=200, altura=200):
-    """Caveirinha com iniciais, cores estáveis por nome."""
     claro, escuro = cor_do_nome(nome)
     letras = iniciais(nome)
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {largura} {altura}" width="{largura}" height="{altura}">
@@ -85,9 +68,7 @@ def retrato_svg(nome, largura=200, altura=200):
 </svg>"""
 
 
-# ------------------------------------------------------------------
-# Comparação do "Adivinhar Personagem"
-# ------------------------------------------------------------------
+# --- Comparação do Adivinhar Personagem ---
 def _classe_exata(a, b):
     return "correto" if a == b else "errado"
 
@@ -110,7 +91,6 @@ def _seta(a, b):
 
 
 def comparar(chute, secreto):
-    """Devolve o quadro de comparação de um palpite."""
     return {
         "nome": chute["nome"],
         "foto": chute["foto"],
@@ -152,11 +132,8 @@ def formatar_berries(valor):
     return f"{valor:,}".replace(",", ".") + " Berries"
 
 
-# ------------------------------------------------------------------
-# Wordle
-# ------------------------------------------------------------------
+# --- Wordle ---
 def avaliar_wordle(palpite, alvo):
-    """Devolve lista de 'certo' / 'parcial' / 'errado' por letra."""
     palpite = palpite.upper()
     alvo = alvo.upper()
     resultado = ["errado"] * len(palpite)
@@ -174,9 +151,7 @@ def avaliar_wordle(palpite, alvo):
     return resultado
 
 
-# ------------------------------------------------------------------
-# Condições pros jogos de Grid / Bingo / Impostor
-# ------------------------------------------------------------------
+# --- Condições (Grid / Bingo / Impostor) ---
 def _e_pirata(p):
     return p["afiliacao"].startswith("Piratas") or p["afiliacao"] in ("Cross Guild", "Barto Club")
 
@@ -269,8 +244,8 @@ def casa_condicao(cond, pessoa):
         return False
 
 
+# --- Grid ---
 def gerar_grid(seed=None):
-    """Monta um 3x3 com condições de linha e coluna que tenha solução."""
     r = random.Random(_semente("grid", seed))
     condicoes = r.sample(CONDICOES, len(CONDICOES))
     for _ in range(300):
@@ -287,12 +262,6 @@ def gerar_grid(seed=None):
 
 
 def _resolver_grid(linhas, colunas, r, orcamento=8000):
-    """Acha 9 personagens distintos (um por casa). None se não der.
-
-    Usa a heurística da variável mais restrita (MRV): a cada passo resolve a
-    casa com menos candidatos disponíveis. Sem isso o backtracking puro explode
-    quando a combinação de condições é insolúvel.
-    """
     celulas = []
     for i in range(3):
         for j in range(3):
@@ -313,7 +282,6 @@ def _resolver_grid(linhas, colunas, r, orcamento=8000):
         passos[0] += 1
         if passos[0] > orcamento:
             return False
-        # escolhe a casa com menos candidatos ainda livres
         escolhida = None
         for cel in restantes:
             livres = [p for p in cel["cands"] if p["nome"] not in usado]
@@ -338,11 +306,8 @@ def _resolver_grid(linhas, colunas, r, orcamento=8000):
     return None
 
 
-# ------------------------------------------------------------------
-# Connections / Impostor
-# ------------------------------------------------------------------
+# --- Connections / Impostor ---
 def gerar_connections(seed=None):
-    """4 grupos de 4 personagens sem repetir ninguém."""
     r = random.Random(_semente("connections", seed))
     validos = [g for g, membros in GRUPOS.items() if len(membros) >= 4]
     r.shuffle(validos)
@@ -366,7 +331,6 @@ def gerar_connections(seed=None):
 
 
 def gerar_impostor(seed=None):
-    """Um grupo e um intruso que NÃO pertence a ele."""
     r = random.Random(_semente("impostor", seed))
     validos = [g for g, m in GRUPOS.items() if len(m) >= 4]
     grupo = r.choice(validos)
@@ -380,7 +344,6 @@ def gerar_impostor(seed=None):
 
 
 def gerar_impostores(quantidade, seed=None):
-    """Vários desafios de impostor de uma vez (pro jogo de 10 rodadas)."""
     r = random.Random(_semente("impostor-lote", seed))
     validos = [g for g, m in GRUPOS.items() if len(m) >= 4]
     desafios = []
@@ -396,9 +359,7 @@ def gerar_impostores(quantidade, seed=None):
     return desafios
 
 
-# ------------------------------------------------------------------
-# Pirâmide
-# ------------------------------------------------------------------
+# --- Pirâmide ---
 CATEGORIAS_PIRAMIDE = [
     {"chave": "altura", "texto": "Altura"},
     {"chave": "recompensa", "texto": "Recompensa"},
@@ -425,17 +386,13 @@ def gerar_piramide(seed=None):
     }
 
 
-# ------------------------------------------------------------------
-# Higher or Lower
-# ------------------------------------------------------------------
+# --- Maior ou Menor ---
 def gerar_higher_lower(seed=None):
     r = random.Random(_semente("higher-lower", seed))
     return r.sample(COM_RECOMPENSA, 21)
 
 
-# ------------------------------------------------------------------
-# Bingo
-# ------------------------------------------------------------------
+# --- Bingo ---
 def gerar_bingo(seed=None):
     r = random.Random(_semente("bingo", seed))
     celulas = r.sample(CONDICOES, 9)
@@ -450,10 +407,6 @@ def cond_por_texto(texto):
 
 
 def bingo_escolher(celulas, travadas, seed=None):
-    """Sorteia um personagem que bate com UMA única casa ainda aberta.
-
-    Assim a partida sempre pode ser completada, sem depender de sorte.
-    """
     abertas = [i for i in range(len(celulas)) if i not in travadas]
     if not abertas:
         return None
@@ -470,7 +423,6 @@ def bingo_escolher(celulas, travadas, seed=None):
                       and casa_condicao(cond_por_texto(celulas[j]), p)]
             if not outras:
                 return p["nome"]
-    # plano B: qualquer um que bata com alguma casa aberta
     for i in abertas:
         cond = cond_por_texto(celulas[i])
         for p in PERSONAGENS:
@@ -479,9 +431,7 @@ def bingo_escolher(celulas, travadas, seed=None):
     return None
 
 
-# ------------------------------------------------------------------
-# Wanted / Fruta / Risa / Episódio
-# ------------------------------------------------------------------
+# --- Wanted / Fruta / Risa / Episódio / Jolly Roger / Wordle ---
 def gerar_wanted(seed=None):
     return do_dia(PERSONAGENS, "wanted", seed)
 
@@ -512,9 +462,7 @@ def gerar_frase(seed=None):
     return do_dia(FRASES, "frase", seed)
 
 
-# ------------------------------------------------------------------
-# Sopa de letras
-# ------------------------------------------------------------------
+# --- Sopa de Letras ---
 TAMANHO_SOPA = 12
 LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -568,9 +516,7 @@ def _encaixar(grade, palavra, r):
     return False
 
 
-# ------------------------------------------------------------------
-# Nakama Draft
-# ------------------------------------------------------------------
+# --- Nakama Draft ---
 def gerar_draft(seed=None):
     r = random.Random(_semente("draft", seed))
     return r.sample(COM_RECOMPENSA, 12)
